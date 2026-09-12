@@ -2,19 +2,25 @@
 """
 save_lab_configs.py - Automated Containerlab Configuration Persistence
 
-This script:
+Features:
 1. Locates the Containerlab topology file (.clab.yml).
-2. Identifies running network devices (Cisco IOL, IOS, etc.) and their management IPs.
-3. Connects via SSH to issue 'write memory' and extract 'show running-config'.
-4. Saves configurations to '<lab_folder>/configs/<node_name>.cfg'.
-5. Updates the topology YAML file to point each node's 'startup-config' to its saved config.
+2. Checks if the lab containers are currently running:
+   - If running: extracts configs directly from live devices.
+   - If NOT running: automatically deploys the lab (loading the existing NVRAM state
+     into the devices), waits for nodes to boot and initialize SSH, and extracts configs.
+3. Issues 'write memory' on each device.
+4. Extracts clean 'show running-config' via SSH.
+5. Saves configurations to '<lab_folder>/configs/<node_name>.cfg'.
+6. Updates the topology YAML file (using ruamel.yaml to preserve comments/formatting)
+   to set 'startup-config: configs/<node_name>.cfg' for all saved nodes.
+7. Optional flag '--destroy-after': shuts down the lab after extraction if it was started by the script.
 """
 
 import os
 import sys
 import time
 import re
-import json
+import socket
 import pty
 import select
 import subprocess
@@ -28,6 +34,23 @@ except ImportError:
     import yaml
 
 
+def print_help():
+    print("""Usage: python3 save_lab_configs.py [path/to/topology.clab.yml] [options]
+
+Options:
+  -h, --help           Show this help message and exit.
+  --destroy-after      If the lab was not running and had to be started automatically,
+                       destroy it after saving the configurations.
+
+Description:
+  Automates extracting live running-configs from Containerlab nodes, saving them into
+  a 'configs/' folder, and updating the topology YAML file to use them as startup-configs.
+  If the lab is stopped, the script starts it to let nodes load their NVRAM state,
+  captures the configs, and updates your topology.
+""")
+    sys.exit(0)
+
+
 def find_topology_file(explicit_path=None):
     """Locate the target Containerlab topology YAML file."""
     if explicit_path:
@@ -37,7 +60,6 @@ def find_topology_file(explicit_path=None):
             sys.exit(1)
         return p.resolve()
 
-    # Search in current directory and 1 level deep
     cwd = Path.cwd()
     topos = list(cwd.glob("*.clab.yml")) + list(cwd.glob("*.clab.yaml"))
     if not topos:
@@ -97,11 +119,9 @@ def get_running_containers(lab_name):
         parts = line.split("\t")
         if len(parts) >= 2:
             c_name, c_id = parts[0], parts[1]
-            # Extract node short name: clab-<lab_name>-<node_name>
             prefix = f"clab-{lab_name}-"
             if c_name.startswith(prefix):
                 node_name = c_name[len(prefix):]
-                # Get IP
                 ip_cmd = ["docker", "inspect", c_id, "--format", "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"]
                 try:
                     ip = subprocess.check_output(ip_cmd, text=True).strip()
@@ -112,102 +132,144 @@ def get_running_containers(lab_name):
     return containers
 
 
-def ssh_extract_config(ip, username="admin", password="admin", timeout=12):
-    """Connect via SSH using a PTY to write memory and extract running-config."""
-    master, slave = pty.openpty()
-    pid = os.fork()
+def ensure_lab_running(topo_file, lab_name):
+    """Check if lab is active; if not, deploy it so NVRAM is loaded into devices."""
+    running = get_running_containers(lab_name)
+    if running:
+        print(f"[+] Lab '{lab_name}' is already running ({len(running)} active containers).")
+        return running, False
 
-    if pid == 0:
-        os.close(master)
-        os.setsid()
-        import fcntl, termios
-        fcntl.ioctl(slave, termios.TIOCSCTTY, 0)
-        for fd in (0, 1, 2):
-            os.dup2(slave, fd)
-        os.close(slave)
-        ssh_cmd = [
-            "ssh",
-            "-o", "UserKnownHostsFile=/dev/null",
-            "-o", "StrictHostKeyChecking=no",
-            "-o", "ConnectTimeout=5",
-            f"{username}@{ip}"
-        ]
-        os.execvp("ssh", ssh_cmd)
+    print(f"[*] Lab '{lab_name}' is not running.")
+    print(f"[*] Starting lab to load existing NVRAM / saved state into devices...")
+    print(f"    Running: sudo containerlab deploy -t {topo_file.name}")
 
-    os.close(slave)
-    buf = b""
+    deploy_cmd = ["sudo", "containerlab", "deploy", "-t", str(topo_file)]
+    res = subprocess.run(deploy_cmd, cwd=topo_file.parent)
+    if res.returncode != 0:
+        print(f"[-] Error: Failed to start Containerlab (exit code {res.returncode}).")
+        sys.exit(res.returncode)
+
+    running = get_running_containers(lab_name)
+    if not running:
+        print("[-] Error: No containers detected even after deployment.")
+        sys.exit(1)
+
+    print(f"[+] Lab deployed successfully ({len(running)} containers up).")
+    return running, True
+
+
+def wait_for_node_ssh(ip, timeout=50):
+    """Wait until SSH port 22 on the device is open and responsive."""
     start = time.time()
-    logged_in = False
+    while time.time() - start < timeout:
+        try:
+            with socket.create_connection((ip, 22), timeout=1.0):
+                return True
+        except (socket.timeout, ConnectionRefusedError, OSError):
+            time.sleep(1.5)
+    return False
 
-    try:
-        # Step 1: Handle password prompt
-        while time.time() - start < timeout:
-            r, _, _ = select.select([master], [], [], 0.3)
-            if r:
-                chunk = os.read(master, 1024)
-                buf += chunk
-                if b"Password:" in buf or b"password:" in buf:
-                    os.write(master, f"{password}\n".encode())
-                    logged_in = True
+
+def ssh_extract_config(ip, username="admin", password="admin", timeout=15, max_retries=3):
+    """Connect via SSH using PTY to issue write memory and extract show running-config."""
+    for attempt in range(1, max_retries + 1):
+        master, slave = pty.openpty()
+        pid = os.fork()
+
+        if pid == 0:
+            os.close(master)
+            os.setsid()
+            import fcntl, termios
+            fcntl.ioctl(slave, termios.TIOCSCTTY, 0)
+            for fd in (0, 1, 2):
+                os.dup2(slave, fd)
+            os.close(slave)
+            ssh_cmd = [
+                "ssh",
+                "-o", "UserKnownHostsFile=/dev/null",
+                "-o", "StrictHostKeyChecking=no",
+                "-o", "ConnectTimeout=5",
+                f"{username}@{ip}"
+            ]
+            os.execvp("ssh", ssh_cmd)
+
+        os.close(slave)
+        buf = b""
+        start = time.time()
+        logged_in = False
+
+        try:
+            while time.time() - start < timeout:
+                r, _, _ = select.select([master], [], [], 0.3)
+                if r:
+                    chunk = os.read(master, 1024)
+                    buf += chunk
+                    if b"Password:" in buf or b"password:" in buf:
+                        os.write(master, f"{password}\n".encode())
+                        logged_in = True
+                        break
+
+            if not logged_in:
+                os.close(master)
+                os.waitpid(pid, 0)
+                if attempt < max_retries:
+                    time.sleep(2)
+                    continue
+                return None, "Failed to reach password prompt"
+
+            time.sleep(1)
+
+            # Step 1: Write memory to ensure NVRAM matches current running-config
+            os.write(master, b"terminal length 0\n")
+            time.sleep(0.3)
+            os.write(master, b"write memory\n")
+            time.sleep(1.5)
+
+            # Step 2: Fetch running configuration
+            os.write(master, b"show running-config\n")
+            time.sleep(0.8)
+
+            full_output = b""
+            wait_start = time.time()
+            while time.time() - wait_start < timeout:
+                r, _, _ = select.select([master], [], [], 1.5)
+                if not r:
+                    break
+                chunk = os.read(master, 4096)
+                full_output += chunk
+                if b"#" in chunk and b"\nend" in full_output:
                     break
 
-        if not logged_in:
-            os.close(master)
-            os.waitpid(pid, 0)
-            return None, "Failed to reach password prompt"
+            os.write(master, b"exit\n")
+            time.sleep(0.2)
+        finally:
+            try:
+                os.close(master)
+                os.waitpid(pid, 0)
+            except Exception:
+                pass
 
-        time.sleep(1)
+        text = full_output.decode("utf-8", errors="ignore")
+        m = re.search(r"((?:version \d+\.\d+|hostname\s+\S+).*?\nend)", text, re.DOTALL)
+        if m:
+            clean_cfg = m.group(1).strip() + "\n"
+            return clean_cfg, None
 
-        # Step 2: Save to startup-config on the box (write memory)
-        os.write(master, b"terminal length 0\n")
-        time.sleep(0.3)
-        os.write(master, b"write memory\n")
-        time.sleep(1.2)
-
-        # Step 3: Fetch running config
-        os.write(master, b"show running-config\n")
-        time.sleep(0.8)
-
-        full_output = b""
-        wait_start = time.time()
-        while time.time() - wait_start < timeout:
-            r, _, _ = select.select([master], [], [], 1.5)
-            if not r:
-                break
-            chunk = os.read(master, 4096)
-            full_output += chunk
-            if b"#" in chunk and b"\nend" in full_output:
-                break
-
-        os.write(master, b"exit\n")
-        time.sleep(0.2)
-    finally:
-        try:
-            os.close(master)
-            os.waitpid(pid, 0)
-        except Exception:
-            pass
-
-    text = full_output.decode("utf-8", errors="ignore")
-
-    # Match configuration between 'version ...' or 'hostname ...' and 'end'
-    m = re.search(r"((?:version \d+\.\d+|hostname\s+\S+).*?\nend)", text, re.DOTALL)
-    if m:
-        clean_cfg = m.group(1).strip() + "\n"
-        return clean_cfg, None
+        if attempt < max_retries:
+            time.sleep(2)
 
     return None, "Could not locate clean config delimiters in output"
 
 
 def main():
-    if len(sys.argv) > 1 and sys.argv[1] in ("-h", "--help"):
-        print("Usage: python3 save_lab_configs.py [path/to/topology.clab.yml]")
-        print("\nAutomates saving live running-configs from Containerlab nodes,")
-        print("writing configs to a 'configs/' folder, and updating the topology file.")
-        sys.exit(0)
+    args = sys.argv[1:]
+    if "-h" in args or "--help" in args:
+        print_help()
 
-    topo_arg = sys.argv[1] if len(sys.argv) > 1 else None
-    topo_file = find_topology_file(topo_arg)
+    destroy_after = "--destroy-after" in args
+    explicit_topo = next((a for a in args if not a.startswith("-")), None)
+
+    topo_file = find_topology_file(explicit_topo)
     topo_dir = topo_file.parent
 
     print(f"[*] Target topology: {topo_file}")
@@ -220,14 +282,32 @@ def main():
     print(f"[*] Lab name: {lab_name}")
     print(f"[*] Total nodes defined in topology: {len(nodes_spec)}")
 
-    # Check running containers
-    running_containers = get_running_containers(lab_name)
-    if not running_containers:
-        print(f"[-] Error: No active containers found for lab '{lab_name}'.")
-        print(f"    Make sure the lab is deployed using: sudo containerlab deploy -t {topo_file.name}")
+    # Ensure lab is active (deploys it if stopped to load NVRAM into devices)
+    running_containers, started_by_script = ensure_lab_running(topo_file, lab_name)
+
+    # Filter for network devices (Cisco IOL, IOS-XE, cEOS, etc.)
+    target_nodes = {}
+    for node_name, spec in nodes_spec.items():
+        kind = spec.get("kind", "")
+        if any(brand in kind for brand in ("cisco", "ceos", "juniper")):
+            if node_name in running_containers:
+                target_nodes[node_name] = (spec, running_containers[node_name]["ip"])
+
+    if not target_nodes:
+        print("[-] No network operating system nodes found to extract configs from.")
         sys.exit(1)
 
-    print(f"[+] Detected {len(running_containers)} active containers.")
+    # If the lab was just deployed, wait for nodes to finish booting and open SSH
+    if started_by_script:
+        print("[*] Waiting for Cisco nodes to finish booting and open SSH...")
+        for node_name, (_, ip) in target_nodes.items():
+            print(f"    Checking {node_name} ({ip})...", end="", flush=True)
+            if wait_for_node_ssh(ip, timeout=50):
+                print(" [READY]")
+            else:
+                print(" [TIMEOUT]")
+        # Give IOL a moment to finish internal CLI initialization
+        time.sleep(3)
 
     # Prepare configs directory
     configs_dir = topo_dir / "configs"
@@ -235,18 +315,8 @@ def main():
 
     saved_nodes = []
 
-    # Process nodes
-    for node_name, spec in nodes_spec.items():
-        kind = spec.get("kind", "")
-        # Only process network OS nodes (cisco_iol, cisco_ios, etc.)
-        if "cisco" not in kind and "ceos" not in kind and "juniper" not in kind:
-            continue
-
-        if node_name not in running_containers:
-            print(f"[!] Warning: Node '{node_name}' is not currently running. Skipping.")
-            continue
-
-        ip = running_containers[node_name]["ip"]
+    # Extract configs
+    for node_name, (spec, ip) in target_nodes.items():
         print(f"[*] Extracting config from '{node_name}' ({ip})...", end="", flush=True)
 
         cfg_text, err = ssh_extract_config(ip, username="admin", password="admin")
@@ -256,18 +326,16 @@ def main():
                 f.write(cfg_text)
             print(f" [OK] -> saved to configs/{node_name}.cfg ({len(cfg_text.splitlines())} lines)")
 
-            # Update spec in topology data
-            rel_cfg_path = f"configs/{node_name}.cfg"
-            spec["startup-config"] = rel_cfg_path
+            spec["startup-config"] = f"configs/{node_name}.cfg"
             saved_nodes.append(node_name)
         else:
             print(f" [FAIL] ({err})")
 
     if not saved_nodes:
-        print("[-] No configurations were saved.")
+        print("[-] No configurations were successfully extracted.")
         sys.exit(1)
 
-    # Save updated topology file
+    # Update topology YAML file
     print(f"[*] Updating topology file '{topo_file.name}' with startup-config references...")
     if HAS_RUAMEL and yaml_parser:
         with open(topo_file, "w", encoding="utf-8") as f:
@@ -279,6 +347,14 @@ def main():
     print(f"[+] Successfully saved configurations for {len(saved_nodes)} nodes:")
     for n in saved_nodes:
         print(f"    - {n} -> configs/{n}.cfg")
+
+    # Destroy lab if requested
+    if started_by_script and destroy_after:
+        print(f"[*] Destroying lab as requested (--destroy-after)...")
+        subprocess.run(["sudo", "containerlab", "destroy", "-t", str(topo_file), "--cleanup"], cwd=topo_dir)
+    elif started_by_script:
+        print(f"[i] Lab remains running. To stop it later, run:")
+        print(f"    sudo containerlab destroy -t {topo_file.name} --cleanup")
 
     print("\n[+] Done! You can now commit your persistent changes to Git:")
     print("    git add .")

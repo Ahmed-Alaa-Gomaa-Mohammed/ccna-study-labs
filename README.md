@@ -58,12 +58,12 @@ flowchart TD
 ### Deploying a Lab
 ```bash
 cd Arizona-Nevada-Florida-lab
-sudo containerlab deploy --topo ccna.clab.yml
+containerlab deploy --topo ccna.clab.yml
 ```
 
 ### Inspecting Running Nodes
 ```bash
-sudo containerlab inspect --topo ccna.clab.yml
+containerlab inspect --topo ccna.clab.yml
 ```
 
 ### Connecting to Devices
@@ -77,7 +77,7 @@ docker exec -it clab-ccna-R1-AZ Cli
 
 ### Destroying the Lab
 ```bash
-sudo containerlab destroy --topo ccna.clab.yml --cleanup
+containerlab destroy --topo ccna.clab.yml --cleanup
 ```
 
 ### Configuration Persistence & Automated Sync

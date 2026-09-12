@@ -141,9 +141,9 @@ def ensure_lab_running(topo_file, lab_name):
 
     print(f"[*] Lab '{lab_name}' is not running.")
     print(f"[*] Starting lab to load existing NVRAM / saved state into devices...")
-    print(f"    Running: sudo containerlab deploy -t {topo_file.name}")
+    print(f"    Running: containerlab deploy -t {topo_file.name}")
 
-    deploy_cmd = ["sudo", "containerlab", "deploy", "-t", str(topo_file)]
+    deploy_cmd = ["containerlab", "deploy", "-t", str(topo_file)]
     res = subprocess.run(deploy_cmd, cwd=topo_file.parent)
     if res.returncode != 0:
         print(f"[-] Error: Failed to start Containerlab (exit code {res.returncode}).")
@@ -202,7 +202,12 @@ def ssh_extract_config(ip, username="admin", password="admin", timeout=15, max_r
             while time.time() - start < timeout:
                 r, _, _ = select.select([master], [], [], 0.3)
                 if r:
-                    chunk = os.read(master, 1024)
+                    try:
+                        chunk = os.read(master, 1024)
+                    except OSError:
+                        break
+                    if not chunk:
+                        break
                     buf += chunk
                     if b"Password:" in buf or b"password:" in buf:
                         os.write(master, f"{password}\n".encode())
@@ -235,7 +240,12 @@ def ssh_extract_config(ip, username="admin", password="admin", timeout=15, max_r
                 r, _, _ = select.select([master], [], [], 1.5)
                 if not r:
                     break
-                chunk = os.read(master, 4096)
+                try:
+                    chunk = os.read(master, 4096)
+                except OSError:
+                    break
+                if not chunk:
+                    break
                 full_output += chunk
                 if b"#" in chunk and b"\nend" in full_output:
                     break
@@ -351,10 +361,10 @@ def main():
     # Destroy lab if requested
     if started_by_script and destroy_after:
         print(f"[*] Destroying lab as requested (--destroy-after)...")
-        subprocess.run(["sudo", "containerlab", "destroy", "-t", str(topo_file), "--cleanup"], cwd=topo_dir)
+        subprocess.run(["containerlab", "destroy", "-t", str(topo_file), "--cleanup"], cwd=topo_dir)
     elif started_by_script:
         print(f"[i] Lab remains running. To stop it later, run:")
-        print(f"    sudo containerlab destroy -t {topo_file.name} --cleanup")
+        print(f"    containerlab destroy -t {topo_file.name} --cleanup")
 
     print("\n[+] Done! You can now commit your persistent changes to Git:")
     print("    git add .")

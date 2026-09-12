@@ -1,104 +1,87 @@
-# Network Study Topologies (Containerlab)
+# CCNA & CCNP Study Labs
 
-This repository contains Containerlab (`clab`) network topologies and lab definitions used for CCNA, CCNP ENCOR, and CCNP ENARSI hands-on practice and network automation.
-
----
-
-## Topologies
-
-### 1. Arizona - Nevada - Florida Multi-Site Lab (`Arizona-Nevada-Florida-lab`)
-
-A multi-site enterprise topology based on CBT Nuggets CCNA/CCNP scenarios, simulating enterprise HQ, branch offices, WAN transit (Metro Ethernet), and Internet gateway.
-
-#### Architecture Overview
-```mermaid
-flowchart TD
-    subgraph Arizona_HQ ["Arizona (HQ)"]
-        PC10["PC-10 (10.1.1.10)"] --- Access1["Access1 (IOL L2)"]
-        PC20["PC-20 (10.1.1.11)"] --- Access1
-        Access1 --- Core1["Core1 (IOL L2)"]
-        Access1 --- Core2["Core2 (IOL L2)"]
-        Core1 === Core2
-        Core1 --- R1["R1-AZ (IOL L3)"]
-    end
-
-    subgraph WAN ["Provider / Transit"]
-        R1 --- MetroE["MetroE (FRRouting Bridge)"]
-        R1 --- Internet["Internet (FRRouting)"]
-    end
-
-    subgraph Nevada_Branch ["Nevada Branch"]
-        MetroE --- R2["R2-NV (IOL L3)"]
-        R2 --- NVSwitch["NV-Switch (IOL L2)"]
-        NVSwitch --- NVPC["NV-PC (Alpine)"]
-    end
-
-    subgraph Florida_Branch ["Florida Branch"]
-        MetroE --- R3["R3-FL (IOL L3)"]
-        R3 --- FLSwitch["FL-Switch (IOL L2)"]
-        FLSwitch --- FLPC["FL-PC (Alpine)"]
-    end
-```
-
-#### Node Breakdown
-* **Routers (Cisco IOL L3 - `17.12.01`):** `R1-AZ`, `R2-NV`, `R3-FL`
-* **Switches (Cisco IOL L2 - `L2-17.12.01`):** `Core1`, `Core2`, `Access1`, `NV-Switch`, `FL-Switch`
-* **WAN / Transit (FRRouting):** `MetroE` (Layer 2 bridge across branches), `Internet`
-* **End Hosts (Alpine Linux):** `PC-10`, `PC-20`, `NV-PC`, `FL-PC`
+A structured collection of hands-on networking labs powered by [Containerlab](https://containerlab.dev/), Cisco IOL (IOS on Linux), and FRRouting. Designed for real-world practice, protocol analysis, and configuration automation across CCNA, CCNP Enterprise (ENCOR 350-401), and Advanced Routing (ENARSI 300-410).
 
 ---
 
-## Quickstart
+## 📚 Lab Catalog
 
-### Prerequisites
-* [Containerlab](https://containerlab.dev/) installed on Linux
-* Docker installed and running
-* Cisco IOL images loaded (`tkdebnath/cisco_iol:17.12.01` and `tkdebnath/cisco_iol:L2-17.12.01`)
+| Lab # | Directory | Focus / Topics | Node Count | Status |
+| :--- | :--- | :--- | :---: | :---: |
+| **01** | [**Arizona - Nevada - Florida Multi-Site Lab**](Arizona-Nevada-Florida-lab/README.md) | Enterprise Campus Switching (Core/Access), 802.1Q Trunks, EtherChannel, SVI routing, Metro Ethernet WAN transit, and Internet gateway | 10 | ✅ Complete |
+| **02** | *Upcoming Lab* | Single & Multi-Area OSPFv2 / OSPFv3, DR/BDR Election, Route Summarization | — | ⏳ Planned |
+| **03** | *Upcoming Lab* | Advanced BGP Routing (eBGP & iBGP Peering, Route Reflectors, Policy Filtering) | — | ⏳ Planned |
+| **04** | *Upcoming Lab* | First-Hop Redundancy (HSRP, VRRP) and IPv4/IPv6 Dual Stack | — | ⏳ Planned |
 
-### Deploying a Lab
-```bash
-cd Arizona-Nevada-Florida-lab
-containerlab deploy --topo ccna.clab.yml
+*(New labs are added progressively as study topics advance).*
+
+---
+
+## 🗂️ Repository Structure
+
+Each lab is maintained as a self-contained module containing its own Containerlab topology specification, initial/saved device startup configurations, and dedicated documentation:
+
+```text
+ccna-study-labs/
+├── Arizona-Nevada-Florida-lab/         # Lab 01: Multi-Site Enterprise Lab
+│   ├── ccna.clab.yml                   # Containerlab topology definition
+│   ├── topology.svg                    # EVE-NG / GNS3 styled vector topology diagram
+│   ├── topology.dot                    # Graphviz DOT diagram source
+│   ├── README.md                       # Lab documentation, data IP table & exercise tasks
+│   └── configs/                        # Cisco IOL startup configurations (NVRAM synced)
+│       ├── R1-AZ.cfg
+│       ├── Core1.cfg
+│       └── ...
+├── save_lab_configs.py                 # Automated config snapshot & NVRAM sync utility
+└── README.md                           # Master repository index and catalog
 ```
 
-### Inspecting Running Nodes
+---
+
+## 🚀 Environment Prerequisites
+
+1. **Linux OS** with Docker installed and running.
+2. **Containerlab**:
+   ```bash
+   bash -c "$(curl -sL https://get.containerlab.dev)"
+   ```
+3. **Cisco IOL Docker Images**:
+   - Cisco IOL L3: `tkdebnath/cisco_iol:17.12.01`
+   - Cisco IOL L2: `tkdebnath/cisco_iol:L2-17.12.01`
+4. **Python 3 & Dependencies**:
+   ```bash
+   pip install pexpect pyyaml
+   ```
+
+---
+
+## 🛠️ Automated Configuration Snapshot Tool
+
+This repository includes [`save_lab_configs.py`](save_lab_configs.py), a zero-sudo automation tool that connects to running lab nodes, runs `write memory`, extracts the clean `running-config`, and synchronizes the `.clab.yml` startup config paths.
+
+### How to Save Lab Progress:
+
 ```bash
-containerlab inspect --topo ccna.clab.yml
+# Automatically saves the default or first detected lab:
+python3 save_lab_configs.py
+
+# Or target a specific lab directly:
+python3 save_lab_configs.py Arizona-Nevada-Florida-lab/ccna.clab.yml
 ```
 
-### Connecting to Devices
-```bash
-# SSH into Cisco IOL node (default credentials: admin / admin)
-ssh admin@clab-ccna-R1-AZ
+**Key Features:**
+* **Self-Healing / Offline Startup**: If the lab is currently stopped, the script automatically boots it up, allows NVRAM state to load into running nodes, extracts the running configs, and updates the topology.
+* **Non-Privileged Execution**: Runs seamlessly without requiring `sudo`.
+* **Git-Ready Output**: Strips non-deterministic timestamps and volatile parameters for clean, diff-friendly Git commits.
 
-# Or attach via docker exec
-docker exec -it clab-ccna-R1-AZ Cli
-```
+---
 
-### Destroying the Lab
-```bash
-containerlab destroy --topo ccna.clab.yml --cleanup
-```
+## 📝 Adding a New Lab
 
-### Configuration Persistence & Automated Sync
-Device configurations are stored in `configs/*.cfg` and automatically loaded on deployment.
-
-#### Automate Config Extraction with Python
-Whenever you make dynamic changes on routers/switches via the CLI, run the included Python utility:
-```bash
-./save_lab_configs.py
-# or specify the topology file:
-./save_lab_configs.py Arizona-Nevada-Florida-lab/ccna.clab.yml
-```
-
-This script will automatically:
-1. Connect to all live nodes via SSH.
-2. Issue `write memory` on each device.
-3. Extract the clean running-config to `configs/<node_name>.cfg`.
-4. Update the `.clab.yml` topology file so it points to the newly saved configs.
-
-Once finished, simply commit to Git:
-```bash
-git add .
-git commit -m "feat(configs): updated dynamic CLI configurations"
-```
+To add a new lab to this collection:
+1. Create a dedicated folder: `mkdir My-New-Lab`
+2. Define the Containerlab topology: `My-New-Lab/<name>.clab.yml`
+3. Generate high-resolution topology visuals and documentation:
+   - Create `My-New-Lab/README.md` with an IP addressing table and exercise objectives.
+   - Store device configs in `My-New-Lab/configs/`.
+4. Register the new lab in the [Lab Catalog](#-lab-catalog) table above.

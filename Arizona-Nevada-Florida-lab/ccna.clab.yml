@@ -6,33 +6,25 @@ topology:
     R1-AZ:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:17.12.01
-      startup-config: |
-        interface Ethernet0/0
-         no cdp enable
+      startup-config: configs/R1-AZ.cfg
 
     Core1:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      startup-config: |
-        interface Ethernet0/0
-         no cdp enable
+      startup-config: configs/Core1.cfg
 
     Core2:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      startup-config: |
-        interface Ethernet0/0
-         no cdp enable
+      startup-config: configs/Core2.cfg
 
     Access1:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      startup-config: |
-        interface Ethernet0/0
-         no cdp enable
+      startup-config: configs/Access1.cfg
 
     PC-10:
       kind: linux
@@ -66,17 +58,13 @@ topology:
     R2-NV:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:17.12.01
-      startup-config: |
-        interface Ethernet0/0
-         no cdp enable
+      startup-config: configs/R2-NV.cfg
 
     NV-Switch:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      startup-config: |
-        interface Ethernet0/0
-         no cdp enable
+      startup-config: configs/NV-Switch.cfg
 
     NV-PC:
       kind: linux
@@ -85,17 +73,13 @@ topology:
     R3-FL:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:17.12.01
-      startup-config: |
-        interface Ethernet0/0
-         no cdp enable
+      startup-config: configs/R3-FL.cfg
 
     FL-Switch:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      startup-config: |
-        interface Ethernet0/0
-         no cdp enable
+      startup-config: configs/FL-Switch.cfg
 
     FL-PC:
       kind: linux

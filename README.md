@@ -79,3 +79,15 @@ docker exec -it clab-ccna-R1-AZ Cli
 ```bash
 sudo containerlab destroy --topo ccna.clab.yml --cleanup
 ```
+
+### Configuration Persistence & Saving
+Device configurations are stored in `configs/*.cfg` and loaded on deployment:
+* **R1-AZ (AZ-Router):** IP `10.16.0.2/24` on Eth1/0, MOTD banner, synchronous logging.
+* **Core1:** SVI `Vlan1` (`10.16.0.1/24`), MOTD banner, synchronous logging.
+* **Access1:** Console logging synchronous.
+* **Branch switches/routers:** Baseline rapid-pvst, management VRF, and system identities.
+
+To save dynamic CLI changes across lab restarts, run:
+```bash
+containerlab save -t Arizona-Nevada-Florida-lab/ccna.clab.yml
+```

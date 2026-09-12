@@ -1,9 +1,9 @@
 digraph CCNA_Topology {
     graph [
         rankdir=TB,
-        splines=true,
-        nodesep=0.8,
-        ranksep=1.0,
+        splines=spline,
+        nodesep=0.85,
+        ranksep=1.15,
         bgcolor="#ffffff",
         fontname="Helvetica,Arial,sans-serif",
         fontsize=12,
@@ -13,305 +13,320 @@ digraph CCNA_Topology {
     node [
         fontname="Helvetica,Arial,sans-serif",
         fontsize=10,
-        shape=box,
-        style="filled,rounded",
-        margin="0.2,0.1",
-        penwidth=1.5
+        shape=none
     ];
     edge [
         fontname="Helvetica,Arial,sans-serif",
-        fontsize=9,
-        penwidth=1.8,
-        color="#374151",
-        fontcolor="#1F2937"
+        fontsize=8.5,
+        penwidth=2.0,
+        color="#475569",
+        fontcolor="#1e293b"
     ];
 
-    # Styling Palettes (EVE-NG / GNS3 Style)
-    # Routers: Blue
-    # Switches: Green / Teal
-    # WAN / Clouds: Amber / Orange
-    # End Hosts: Slate Gray
-
-    subgraph cluster_az {
-        label="ARIZONA HQ CAMPUS
-(Subnet: 10.16.0.0/24 & 10.1.1.0/24)";
-        labeljust="l";
+    # ==========================================
+    # SERVICE PROVIDER (WAN & INTERNET)
+    # ==========================================
+    subgraph cluster_sp {
+        label="SERVICE PROVIDER (WAN & INTERNET)";
+        labeljust="c";
         style="rounded,dashed";
-        color="#2563EB";
-        bgcolor="#F0F7FF";
-        fontcolor="#1E40AF";
-        fontsize=12;
-        penwidth=1.5;
+        color="#d97706";
+        bgcolor="#fffbeb";
+        fontcolor="#92400e";
+        fontsize=13;
+        penwidth=1.8;
+        margin=24;
 
-        R1_AZ [
-            label="R1-AZ
-[AZ-Router]
-Cisco IOL L3
-Eth1/0: 10.16.0.2/24",
-            fillcolor="#DBEAFE",
-            color="#2563EB",
-            shape=box,
-            style="filled,rounded"
+        { rank=same; Internet; MetroE; }
+
+        Internet [
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/cloud.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">Internet Gateway</font></b></td></tr>
+                <tr><td><font point-size="9" color="#b45309">Public IP Transit</font></td></tr>
+                <tr><td><font point-size="9" color="#78350f">FRRouting (eth1)</font></td></tr>
+            </table>>
         ];
 
+        MetroE [
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/cloud.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">MetroE</font></b></td></tr>
+                <tr><td><font point-size="9" color="#b45309">Carrier Ethernet Bridge</font></td></tr>
+                <tr><td><font point-size="9" color="#78350f">br0 [eth1, eth2, eth3]</font></td></tr>
+            </table>>
+        ];
+    }
+
+    # ==========================================
+    # ARIZONA HQ CAMPUS
+    # ==========================================
+    subgraph cluster_az {
+        label="ARIZONA HQ CAMPUS
+(Subnets: 10.16.0.0/24 & 10.1.1.0/24)";
+        labeljust="l";
+        style="rounded,dashed";
+        color="#2563eb";
+        bgcolor="#f8fafc";
+        fontcolor="#1e40af";
+        fontsize=12;
+        penwidth=1.8;
+        margin=24;
+
+        R1_AZ [
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/router.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">R1-AZ</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[AZ-Router - IOL L3]</font></td></tr>
+                <tr><td><font point-size="10" color="#2563eb"><b>Eth1/0: 10.16.0.2/24</b></font></td></tr>
+            </table>>
+        ];
+
+        { rank=same; Core1; Core2; }
+
         Core1 [
-            label="Core1
-Cisco IOL L2
-SVI Vlan1: 10.16.0.1/24",
-            fillcolor="#D1FAE5",
-            color="#059669",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/switch.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">Core1</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Cisco IOL L2]</font></td></tr>
+                <tr><td><font point-size="10" color="#059669"><b>SVI Vlan1: 10.16.0.1/24</b></font></td></tr>
+            </table>>
         ];
 
         Core2 [
-            label="Core2
-Cisco IOL L2
-Distribution / Core",
-            fillcolor="#D1FAE5",
-            color="#059669",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/switch.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">Core2</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Cisco IOL L2 - Dist/Core]</font></td></tr>
+            </table>>
         ];
 
         Access1 [
-            label="Access1
-Cisco IOL L2
-Access Switch",
-            fillcolor="#CCFBF1",
-            color="#0D9488",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/switch.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">Access1</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Cisco IOL L2 - Access]</font></td></tr>
+            </table>>
         ];
 
+        { rank=same; PC10; PC20; }
+
         PC10 [
-            label="PC-10
-Alpine Linux
-eth1: 10.1.1.10/24",
-            fillcolor="#F3F4F6",
-            color="#4B5563",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/pc.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">PC-10</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Alpine Client]</font></td></tr>
+                <tr><td><font point-size="10" color="#0284c7"><b>eth1: 10.1.1.10/24</b></font></td></tr>
+            </table>>
         ];
 
         PC20 [
-            label="PC-20
-Alpine Linux
-eth1: 10.1.1.11/24",
-            fillcolor="#F3F4F6",
-            color="#4B5563",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/pc.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">PC-20</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Alpine Client]</font></td></tr>
+                <tr><td><font point-size="10" color="#0284c7"><b>eth1: 10.1.1.11/24</b></font></td></tr>
+            </table>>
         ];
     }
 
-    subgraph cluster_wan {
-        label="WAN & TRANSIT PROVIDERS";
-        labeljust="l";
-        style="rounded,dashed";
-        color="#D97706";
-        bgcolor="#FFFBEB";
-        fontcolor="#92400E";
-        fontsize=12;
-        penwidth=1.5;
-
-        MetroE [
-            label="MetroE
-FRRouting (L2 Bridge)
-br0 [eth1, eth2, eth3]",
-            fillcolor="#FEF3C7",
-            color="#D97706",
-            shape=ellipse
-        ];
-
-        Internet [
-            label="Internet Gateway
-FRRouting (IP Forwarding)
-eth1",
-            fillcolor="#FEF3C7",
-            color="#D97706",
-            shape=ellipse
-        ];
-    }
-
+    # ==========================================
+    # NEVADA BRANCH OFFICE
+    # ==========================================
     subgraph cluster_nv {
         label="NEVADA BRANCH OFFICE";
         labeljust="l";
         style="rounded,dashed";
-        color="#7C3AED";
-        bgcolor="#F5F3FF";
-        fontcolor="#5B21B6";
+        color="#7c3aed";
+        bgcolor="#faf5ff";
+        fontcolor="#5b21b6";
         fontsize=12;
-        penwidth=1.5;
+        penwidth=1.8;
+        margin=24;
 
         R2_NV [
-            label="R2-NV
-Cisco IOL L3
-Branch Gateway",
-            fillcolor="#EDE9FE",
-            color="#7C3AED",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/router.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">R2-NV</font></b></td></tr>
+                <tr><td><font point-size="9" color="#6b21a8">[Branch Gateway - IOL L3]</font></td></tr>
+            </table>>
         ];
 
         NV_Switch [
-            label="NV-Switch
-Cisco IOL L2
-Branch Access",
-            fillcolor="#D1FAE5",
-            color="#059669",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/switch.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">NV-Switch</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Cisco IOL L2]</font></td></tr>
+            </table>>
         ];
 
         NV_PC [
-            label="NV-PC
-Alpine Linux
-LAN Client",
-            fillcolor="#F3F4F6",
-            color="#4B5563",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/pc.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">NV-PC</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Alpine Client]</font></td></tr>
+            </table>>
         ];
     }
 
+    # ==========================================
+    # FLORIDA BRANCH OFFICE
+    # ==========================================
     subgraph cluster_fl {
         label="FLORIDA BRANCH OFFICE";
         labeljust="l";
         style="rounded,dashed";
-        color="#0891B2";
-        bgcolor="#ECFEFF";
-        fontcolor="#155E75";
+        color="#0891b2";
+        bgcolor="#ecfeff";
+        fontcolor="#155e75";
         fontsize=12;
-        penwidth=1.5;
+        penwidth=1.8;
+        margin=24;
 
         R3_FL [
-            label="R3-FL
-Cisco IOL L3
-Branch Gateway",
-            fillcolor="#CFFAFE",
-            color="#0891B2",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/router.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">R3-FL</font></b></td></tr>
+                <tr><td><font point-size="9" color="#0e7490">[Branch Gateway - IOL L3]</font></td></tr>
+            </table>>
         ];
 
         FL_Switch [
-            label="FL-Switch
-Cisco IOL L2
-Branch Access",
-            fillcolor="#D1FAE5",
-            color="#059669",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/switch.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">FL-Switch</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Cisco IOL L2]</font></td></tr>
+            </table>>
         ];
 
         FL_PC [
-            label="FL-PC
-Alpine Linux
-LAN Client",
-            fillcolor="#F3F4F6",
-            color="#4B5563",
-            shape=box
+            label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="2">
+                <tr><td><img src="icons/pc.png"/></td></tr>
+                <tr><td><b><font point-size="12" color="#0f172a">FL-PC</font></b></td></tr>
+                <tr><td><font point-size="9" color="#64748b">[Alpine Client]</font></td></tr>
+            </table>>
         ];
     }
 
-    # Arizona HQ Internal Links
-    R1_AZ -> Core1 [
-        taillabel="Eth1/0
-10.16.0.2/24",
-        headlabel="Eth2/1
-SVI 10.16.0.1/24",
+    # ==========================================
+    # WAN / SERVICE PROVIDER CONNECTIONS (Top -> Down)
+    # ==========================================
+    Internet:s -> R1_AZ:nw [
+        taillabel="eth1  ",
+        headlabel="  Eth2/0",
+        label="Public IP Transit",
         dir=none,
-        color="#2563EB",
+        color="#d97706",
+        penwidth=2.2
+    ];
+
+    MetroE:sw -> R1_AZ:ne [
+        taillabel="eth1  ",
+        headlabel="  Eth3/0",
+        label="MetroE Trunk",
+        dir=none,
+        color="#d97706",
+        penwidth=2.2
+    ];
+
+    MetroE:s -> R2_NV:n [
+        taillabel="eth2  ",
+        headlabel="  Eth1/0",
+        label="MetroE L2 Link",
+        dir=none,
+        color="#7c3aed",
+        penwidth=2.2
+    ];
+
+    MetroE:se -> R3_FL:n [
+        taillabel="  eth3",
+        headlabel="  Eth1/0",
+        label="MetroE L2 Link",
+        dir=none,
+        color="#0891b2",
+        penwidth=2.2
+    ];
+
+    # ==========================================
+    # ARIZONA HQ CONNECTIONS
+    # ==========================================
+    R1_AZ:s -> Core1:n [
+        taillabel="Eth1/0 (10.16.0.2)  ",
+        headlabel="  Eth2/1 (10.16.0.1)",
+        dir=none,
+        color="#2563eb",
         penwidth=2.5
     ];
 
-    Core1 -> Core2 [
-        taillabel="Eth2/3, Eth2/2",
-        headlabel="Eth3/0, Eth3/1",
-        label="802.1Q Trunk / Dual-Link",
+    Core1:e -> Core2:w [
+        label="802.1Q Trunk (Dual-Link)
+Eth2/3, Eth2/2  <===>  Eth3/0, Eth3/1",
         dir=none,
         color="#059669",
         penwidth=2.5
     ];
 
-    Core1 -> Access1 [
-        taillabel="Eth2/0",
-        headlabel="Eth1/1",
+    Core1:s -> Access1:n [
+        taillabel="Eth2/0  ",
+        headlabel="  Eth1/1",
         dir=none,
-        color="#0D9488"
+        color="#0d9488",
+        penwidth=1.8
     ];
 
-    Core2 -> Access1 [
-        taillabel="Eth3/2",
-        headlabel="Eth1/2",
+    Core2:s -> Access1:n [
+        taillabel="Eth3/2  ",
+        headlabel="  Eth1/2",
         dir=none,
-        color="#0D9488"
+        color="#0d9488",
+        penwidth=1.8
     ];
 
-    Access1 -> PC10 [
-        taillabel="Eth1/0",
-        headlabel="eth1: 10.1.1.10/24",
-        dir=none
-    ];
-
-    Access1 -> PC20 [
-        taillabel="Eth2/0",
-        headlabel="eth1: 10.1.1.11/24",
-        dir=none
-    ];
-
-    # WAN Connections from R1-AZ
-    R1_AZ -> Internet [
-        taillabel="Eth2/0",
-        headlabel="eth1",
-        label="Public IP Transit",
+    Access1:s -> PC10:n [
+        taillabel="Eth1/0  ",
+        headlabel="  eth1",
         dir=none,
-        color="#D97706",
-        penwidth=2.0
+        color="#64748b"
     ];
 
-    R1_AZ -> MetroE [
-        taillabel="Eth3/0",
-        headlabel="eth1",
-        label="MetroE Trunk",
+    Access1:s -> PC20:n [
+        taillabel="Eth2/0  ",
+        headlabel="  eth1",
         dir=none,
-        color="#D97706",
-        penwidth=2.2
+        color="#64748b"
     ];
 
-    # Branch WAN Links
-    MetroE -> R2_NV [
-        taillabel="eth2",
-        headlabel="Eth1/0",
-        label="MetroE L2 Link",
+    # ==========================================
+    # NEVADA BRANCH CONNECTIONS
+    # ==========================================
+    R2_NV:s -> NV_Switch:n [
+        taillabel="Eth2/0  ",
+        headlabel="  Eth4/3",
         dir=none,
-        color="#7C3AED",
-        penwidth=2.2
+        color="#7c3aed"
     ];
 
-    MetroE -> R3_FL [
-        taillabel="eth3",
-        headlabel="Eth1/0",
-        label="MetroE L2 Link",
+    NV_Switch:s -> NV_PC:n [
+        taillabel="Eth0/1  ",
+        headlabel="  eth1",
         dir=none,
-        color="#0891B2",
-        penwidth=2.2
+        color="#64748b"
     ];
 
-    # Nevada Internal
-    R2_NV -> NV_Switch [
-        taillabel="Eth2/0",
-        headlabel="Eth4/3",
-        dir=none
+    # ==========================================
+    # FLORIDA BRANCH CONNECTIONS
+    # ==========================================
+    R3_FL:s -> FL_Switch:n [
+        taillabel="Eth2/0  ",
+        headlabel="  Eth4/3",
+        dir=none,
+        color="#0891b2"
     ];
 
-    NV_Switch -> NV_PC [
-        taillabel="Eth0/1",
-        headlabel="eth1",
-        dir=none
-    ];
-
-    # Florida Internal
-    R3_FL -> FL_Switch [
-        taillabel="Eth2/0",
-        headlabel="Eth4/3",
-        dir=none
-    ];
-
-    FL_Switch -> FL_PC [
-        taillabel="Eth0/1",
-        headlabel="eth1",
-        dir=none
+    FL_Switch:s -> FL_PC:n [
+        taillabel="Eth0/1  ",
+        headlabel="  eth1",
+        dir=none,
+        color="#64748b"
     ];
 }

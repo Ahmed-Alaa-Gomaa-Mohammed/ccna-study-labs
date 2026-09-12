@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="cGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#bae6fd"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shadow base -->
+  <ellipse cx="64" cy="108" rx="48" ry="10" fill="#94a3b8" opacity="0.4"/>
+
+  <!-- Fluffy Cloud Body -->
+  <path d="M 36 94 
+           A 22 22 0 0 1 20 62 
+           A 26 26 0 0 1 52 38 
+           A 32 32 0 0 1 96 46 
+           A 24 24 0 0 1 108 74 
+           A 22 22 0 0 1 94 94 
+           Z" 
+        fill="url(#cGrad)" stroke="#0284c7" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- Internal Network Core Graphic inside cloud -->
+  <g stroke="#0284c7" stroke-width="2" fill="#0284c7">
+    <circle cx="48" cy="66" r="4"/>
+    <circle cx="72" cy="58" r="4"/>
+    <circle cx="84" cy="74" r="4"/>
+    <circle cx="60" cy="80" r="4"/>
+    <line x1="48" y1="66" x2="72" y2="58" opacity="0.6"/>
+    <line x1="72" y1="58" x2="84" y2="74" opacity="0.6"/>
+    <line x1="48" y1="66" x2="60" y2="80" opacity="0.6"/>
+    <line x1="60" y1="80" x2="84" y2="74" opacity="0.6"/>
+  </g>
+</svg>

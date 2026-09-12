@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shadow base -->
+  <ellipse cx="64" cy="116" rx="48" ry="8" fill="#94a3b8" opacity="0.4"/>
+
+  <!-- Monitor Bezel Outer -->
+  <rect x="18" y="16" width="92" height="66" rx="6" fill="#1e293b" stroke="#0f172a" stroke-width="2.5"/>
+  <!-- Inner Screen Display -->
+  <rect x="24" y="22" width="80" height="54" rx="3" fill="url(#screenGrad)"/>
+  <!-- Console / Terminal UI hint -->
+  <path d="M 30 32 L 52 32 M 30 40 L 64 40 M 30 48 L 44 48" stroke="#f0f9ff" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="32" cy="62" r="3" fill="#22c55e"/>
+  <rect x="40" y="60" width="20" height="4" rx="2" fill="#f0f9ff" opacity="0.8"/>
+
+  <!-- Stand Neck -->
+  <polygon points="58,82 70,82 74,98 54,98" fill="#475569" stroke="#1e293b" stroke-width="1.5"/>
+  <!-- Stand Base -->
+  <rect x="40" y="98" width="48" height="8" rx="3" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+
+  <!-- Keyboard in front -->
+  <polygon points="22,108 106,108 100,118 28,118" fill="#64748b" stroke="#334155" stroke-width="1.5"/>
+  <line x1="36" y1="113" x2="92" y2="113" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="sTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14b8a6"/>
+      <stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="sLeft" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#115e59"/>
+    </linearGradient>
+    <linearGradient id="sRight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#115e59"/>
+      <stop offset="100%" stop-color="#134e4a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shadow base -->
+  <polygon points="64,116 116,92 64,74 12,92" fill="#94a3b8" opacity="0.4"/>
+
+  <!-- Left 3D Face -->
+  <polygon points="12,50 64,74 64,104 12,80" fill="url(#sLeft)" stroke="#042f2e" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- Right 3D Face -->
+  <polygon points="64,74 116,50 116,80 64,104" fill="url(#sRight)" stroke="#042f2e" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- Top 3D Face -->
+  <polygon points="12,50 64,26 116,50 64,74" fill="url(#sTop)" stroke="#042f2e" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- Cisco Switch Dual Opposing Arrows -->
+  <g fill="#ffffff" stroke="#ffffff" stroke-linejoin="round">
+    <!-- Upper Left-to-Right -->
+    <line x1="34" y1="45" x2="52" y2="53" stroke-width="3.5" stroke-linecap="round"/>
+    <polygon points="50,49 58,56 48,55"/>
+
+    <!-- Upper Right-to-Left -->
+    <line x1="60" y1="43" x2="42" y2="35" stroke-width="3.5" stroke-linecap="round"/>
+    <polygon points="44,39 36,32 46,33"/>
+
+    <!-- Lower Right-to-Left -->
+    <line x1="94" y1="45" x2="76" y2="53" stroke-width="3.5" stroke-linecap="round"/>
+    <polygon points="80,55 70,56 78,49"/>
+
+    <!-- Lower Left-to-Right -->
+    <line x1="68" y1="43" x2="86" y2="35" stroke-width="3.5" stroke-linecap="round"/>
+    <polygon points="82,33 92,32 84,39"/>
+  </g>
+</svg>

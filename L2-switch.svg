@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="273"
+   height="196"
+   viewBox="0 0 273 196"
+   version="1.1"
+   id="svg12"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs12" />
+  <!-- Background -->
+  <!-- Switch 3D Body Base -->
+  <!-- Front-Right Face Panel -->
+  <!-- Top Face Panel -->
+  <!-- Ethernet Ports (Front-Left Face) -->
+  <!-- Routing Arrows (Top Face) -->
+  <g
+     id="g24">
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:#ffffff;stroke-linecap:round;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000"
+       d="M 27.499999,60.099998 104,135 247,94.399998 l -76,-73.4 z"
+       id="path23" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;stroke-linecap:round;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000"
+       d="M 170.08008,17.623047 26.580078,56.722656 c -2.610133,0.710396 -3.462398,3.986665 -1.529297,5.878906 L 101.55078,137.5 c 0.89705,0.8788 2.19613,1.20972 3.4043,0.86719 l 143,-40.599612 c 2.59599,-0.73667 3.41725,-4.009788 1.47656,-5.884766 l -76,-73.40039 c -0.88762,-0.857182 -2.16099,-1.183689 -3.35156,-0.859375 z m 2.79624,10.055229 64.42775,62.222789 a 2.3137632,2.3137632 104.07623 0 1 -0.97541,3.890102 L 108.8647,129.98031 a 6.9277462,6.9277462 14.272167 0 1 -6.73873,-1.71419 L 37.184578,64.683097 A 2.3036455,2.3036455 104.57655 0 1 38.190599,60.81443 L 166.14191,25.951602 a 7.0327628,7.0327628 14.380613 0 1 6.73441,1.726674 z"
+       id="path24" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:#ffffff;stroke-linecap:round;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000"
+       d="m 247,94.4 v 50.2 L 104,183.5 V 135 Z"
+       id="path21" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;stroke-linecap:round;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000"
+       d="m 246.04492,91.033203 -143,40.599607 c -1.5057,0.42721 -2.54481,1.80206 -2.54492,3.36719 v 48.5 c 6.5e-4,2.30618 2.19245,3.98152 4.41797,3.37695 l 143,-38.90039 c 1.52391,-0.41431 2.58167,-1.79772 2.58203,-3.37695 V 94.400391 c -2.9e-4,-2.322394 -2.22074,-4.000627 -4.45508,-3.367188 z M 243.5,102.23697 v 36.48504 a 4.1917177,4.1917177 127.39103 0 1 -3.09143,4.04473 L 110.59143,178.08091 A 2.4486736,2.4486736 37.391034 0 1 107.5,175.7181 v -34.8698 a 4.2399584,4.2399584 127.0752 0 1 3.08197,-4.07876 L 240.41803,99.908195 A 2.4208135,2.4208135 37.075197 0 1 243.5,102.23697 Z"
+       id="path22" />
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:fill markers stroke"
+       d="m 104,135 v 48.5 L 27.5,108.6 V 60.1 Z"
+       id="path17" />
+    <g
+       transform="matrix(1, 1, 0, 1, 0, 0)"
+       fill="#FEFEFE"
+       id="g9">
+      <!-- Top Row -->
+      <rect
+         x="32.8"
+         y="54.7"
+         width="4.6"
+         height="5.6"
+         rx="1.2"
+         id="rect4" />
+      <rect
+         x="40.0"
+         y="54.7"
+         width="4.4"
+         height="5.6"
+         rx="1.2"
+         id="rect5" />
+      <rect
+         x="47.0"
+         y="54.7"
+         width="4.5"
+         height="5.6"
+         rx="1.2"
+         id="rect6" />
+      <!-- Bottom Row -->
+      <rect
+         x="32.8"
+         y="67.7"
+         width="4.6"
+         height="5.6"
+         rx="1.2"
+         id="rect7" />
+      <rect
+         x="40.0"
+         y="67.7"
+         width="4.4"
+         height="5.6"
+         rx="1.2"
+         id="rect8" />
+      <rect
+         x="47.0"
+         y="67.7"
+         width="4.5"
+         height="5.6"
+         rx="1.2"
+         id="rect9" />
+    </g>
+  </g>
+  <g
+     id="arrows"
+     transform="matrix(1,-0.01679584,0,1,-3.5499992,1.911825)">
+    <!-- Arrow 1 (Top, pointing right) -->
+    <line
+       x1="71.099998"
+       y1="63.700001"
+       x2="158"
+       y2="41.5"
+       stroke="#000000"
+       stroke-width="3.8"
+       stroke-linecap="round"
+       id="line9" />
+    <polygon
+       points="155.5,43.2 160.2,47.5 173.3,36.8 149.5,36.3 "
+       fill="#000000"
+       id="polygon9" />
+    <!-- Arrow 2 (Upper-Middle, pointing left) -->
+    <line
+       x1="172.10001"
+       y1="59.299999"
+       x2="85"
+       y2="81.5"
+       stroke="#000000"
+       stroke-width="3.8"
+       stroke-linecap="round"
+       id="line10" />
+    <polygon
+       points="87.9,78.9 83.3,74.9 69.8,85.4 93.9,86 "
+       fill="#000000"
+       id="polygon10" />
+    <!-- Arrow 3 (Lower-Middle, pointing right) -->
+    <line
+       x1="104"
+       y1="96.099998"
+       x2="191"
+       y2="73.800003"
+       stroke="#000000"
+       stroke-width="3.8"
+       stroke-linecap="round"
+       id="line11" />
+    <polygon
+       points="189.1,76.5 193.6,80.8 206.9,69.8 182.7,69.3 "
+       fill="#000000"
+       id="polygon11" />
+    <!-- Arrow 4 (Bottom, pointing left) -->
+    <line
+       x1="205"
+       y1="92.300003"
+       x2="118"
+       y2="114.5"
+       stroke="#000000"
+       stroke-width="3.8"
+       stroke-linecap="round"
+       id="line12" />
+    <polygon
+       points="121,112.3 116.5,108 103.1,119.3 127.6,119.4 "
+       fill="#000000"
+       id="polygon12" />
+  </g>
+</svg>

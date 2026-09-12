@@ -1,0 +1,124 @@
+name: ccna
+
+topology:
+  nodes:
+
+    R1-AZ:
+      kind: cisco_iol
+      image: tkdebnath/cisco_iol:17.12.01
+      startup-config: |
+        interface Ethernet0/0
+         no cdp enable
+
+    Core1:
+      kind: cisco_iol
+      image: tkdebnath/cisco_iol:L2-17.12.01
+      type: l2
+      startup-config: |
+        interface Ethernet0/0
+         no cdp enable
+
+    Core2:
+      kind: cisco_iol
+      image: tkdebnath/cisco_iol:L2-17.12.01
+      type: l2
+      startup-config: |
+        interface Ethernet0/0
+         no cdp enable
+
+    Access1:
+      kind: cisco_iol
+      image: tkdebnath/cisco_iol:L2-17.12.01
+      type: l2
+      startup-config: |
+        interface Ethernet0/0
+         no cdp enable
+
+    PC-10:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.1.1.10/24 dev eth1
+
+    PC-20:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - ip addr add 10.1.1.11/24 dev eth1
+
+    MetroE:
+      kind: linux
+      image: frrouting/frr:latest
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip link add br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+
+    Internet:
+      kind: linux
+      image: frrouting/frr:latest
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+
+    R2-NV:
+      kind: cisco_iol
+      image: tkdebnath/cisco_iol:17.12.01
+      startup-config: |
+        interface Ethernet0/0
+         no cdp enable
+
+    NV-Switch:
+      kind: cisco_iol
+      image: tkdebnath/cisco_iol:L2-17.12.01
+      type: l2
+      startup-config: |
+        interface Ethernet0/0
+         no cdp enable
+
+    NV-PC:
+      kind: linux
+      image: alpine:latest
+
+    R3-FL:
+      kind: cisco_iol
+      image: tkdebnath/cisco_iol:17.12.01
+      startup-config: |
+        interface Ethernet0/0
+         no cdp enable
+
+    FL-Switch:
+      kind: cisco_iol
+      image: tkdebnath/cisco_iol:L2-17.12.01
+      type: l2
+      startup-config: |
+        interface Ethernet0/0
+         no cdp enable
+
+    FL-PC:
+      kind: linux
+      image: alpine:latest
+
+  links:
+    - endpoints: ["Core1:Ethernet2/3", "Core2:Ethernet3/0"] 
+    - endpoints: ["Core1:Ethernet2/2", "Core2:Ethernet3/1"] 
+
+    - endpoints: ["MetroE:eth2", "R2-NV:Ethernet1/0"] 
+    - endpoints: ["MetroE:eth3", "R3-FL:Ethernet1/0"] 
+
+    - endpoints: ["R1-AZ:Ethernet1/0", "Core1:Ethernet2/1"] 
+    - endpoints: ["R1-AZ:Ethernet3/0", "MetroE:eth1"] 
+    - endpoints: ["R1-AZ:Ethernet2/0", "Internet:eth1"] 
+
+    - endpoints: ["Access1:Ethernet1/1", "Core1:Ethernet2/0"] 
+    - endpoints: ["Access1:Ethernet1/2", "Core2:Ethernet3/2"] 
+    - endpoints: ["Access1:Ethernet1/0", "PC-10:eth1"] 
+    - endpoints: ["Access1:Ethernet2/0", "PC-20:eth1"] 
+
+    - endpoints: ["R2-NV:Ethernet2/0", "NV-Switch:Ethernet4/3"] 
+    - endpoints: ["NV-Switch:Ethernet0/1", "NV-PC:eth1"] 
+
+    - endpoints: ["R3-FL:Ethernet2/0", "FL-Switch:Ethernet4/3"] 
+    - endpoints: ["FL-Switch:Ethernet0/1", "FL-PC:eth1"] 

@@ -1,0 +1,66 @@
+# ==========================================
+# Containerlab Runtime & Ephemeral Artifacts
+# ==========================================
+clab-*/
+**/clab-*/
+.tls/
+**/.tls/
+*.clab.bak
+.state*.yaml
+**/.state*.yaml
+topology-data.json
+**/topology-data.json
+ansible-inventory.yml
+**/ansible-inventory.yml
+nornir-simple-inventory.yml
+**/nornir-simple-inventory.yml
+.ansible/
+**/ansible.log
+
+# Cisco IOL / Emulator runtime binaries & configs
+nvram_*
+**/nvram_*
+NETMAP
+**/NETMAP
+iouyap.ini
+**/iouyap.ini
+boot_config.txt
+**/boot_config.txt
+*.raw
+*.qcow2
+*.vmdk
+
+# ==========================================
+# Packet Captures & Diagnostics
+# ==========================================
+*.pcap
+*.pcapng
+*.cap
+*.log
+
+# ==========================================
+# Python & Automation Tools
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+
+# ==========================================
+# Editor & OS Metadata
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Local backup/scratch copies
+*-copy/
+*-backup/

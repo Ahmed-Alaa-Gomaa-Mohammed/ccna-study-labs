@@ -80,14 +80,25 @@ docker exec -it clab-ccna-R1-AZ Cli
 sudo containerlab destroy --topo ccna.clab.yml --cleanup
 ```
 
-### Configuration Persistence & Saving
-Device configurations are stored in `configs/*.cfg` and loaded on deployment:
-* **R1-AZ (AZ-Router):** IP `10.16.0.2/24` on Eth1/0, MOTD banner, synchronous logging.
-* **Core1:** SVI `Vlan1` (`10.16.0.1/24`), MOTD banner, synchronous logging.
-* **Access1:** Console logging synchronous.
-* **Branch switches/routers:** Baseline rapid-pvst, management VRF, and system identities.
+### Configuration Persistence & Automated Sync
+Device configurations are stored in `configs/*.cfg` and automatically loaded on deployment.
 
-To save dynamic CLI changes across lab restarts, run:
+#### Automate Config Extraction with Python
+Whenever you make dynamic changes on routers/switches via the CLI, run the included Python utility:
 ```bash
-containerlab save -t Arizona-Nevada-Florida-lab/ccna.clab.yml
+./save_lab_configs.py
+# or specify the topology file:
+./save_lab_configs.py Arizona-Nevada-Florida-lab/ccna.clab.yml
+```
+
+This script will automatically:
+1. Connect to all live nodes via SSH.
+2. Issue `write memory` on each device.
+3. Extract the clean running-config to `configs/<node_name>.cfg`.
+4. Update the `.clab.yml` topology file so it points to the newly saved configs.
+
+Once finished, simply commit to Git:
+```bash
+git add .
+git commit -m "feat(configs): updated dynamic CLI configurations"
 ```

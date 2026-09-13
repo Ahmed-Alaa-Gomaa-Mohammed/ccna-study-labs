@@ -34,30 +34,30 @@ ICONS = {
     "cloud": load_icon("cloud.svg"),
 }
 
-# Node definitions: (id, label, type, cx, cy, sublabel)
+# Node definitions: (id, label, type, cx, cy, sublabel, label_above)
 # Official IPs only: Core1 (10.16.0.1/24), R1-AZ (10.16.0.2/24), PC-10 (10.1.1.10/24), PC-20 (10.1.1.11/24)
 NODES = [
     # SERVICE PROVIDER (center)
-    ("Internet",  "Internet",      "cloud",   800, 210, ""),
-    ("MetroE",    "MetroE",        "cloud",   800, 480, ""),
+    ("Internet",  "Internet",      "cloud",     800, 210, "",              False),
+    ("MetroE",    "MetroE",        "cloud",     800, 480, "",              False),
 
     # ARIZONA HQ CAMPUS (right)
-    ("R1-AZ",     "R1-AZ",         "router",  1150, 360, "10.16.0.2/24"),
-    ("Core1",     "Core1",         "switch",  1370, 210, "10.16.0.1/24"),
-    ("Core2",     "Core2",         "switch",  1370, 510, ""),
-    ("Access1",   "Access1",       "switch",  1590, 360, ""),
-    ("PC-10",     "PC-10",         "pc",      1810, 210, "10.1.1.10/24"),
-    ("PC-20",     "PC-20",         "pc",      1810, 510, "10.1.1.11/24"),
+    ("R1-AZ",     "R1-AZ",         "router",   1150, 360, "10.16.0.2/24", False),
+    ("Core1",     "Core1",         "l3switch", 1370, 210, "10.16.0.1/24", True),
+    ("Core2",     "Core2",         "l3switch", 1370, 510, "",              True),
+    ("Access1",   "Access1",       "switch",   1590, 360, "",              False),
+    ("PC-10",     "PC-10",         "pc",       1810, 210, "10.1.1.10/24", False),
+    ("PC-20",     "PC-20",         "pc",       1810, 510, "10.1.1.11/24", False),
 
     # NEVADA DC (bottom-left)
-    ("R2-NV",     "R2-NV",         "router",  330,  830, ""),
-    ("NV-Switch", "NV-Switch",     "switch",  590,  830, ""),
-    ("NV-PC",     "NV-PC",         "pc",      850,  830, ""),
+    ("R2-NV",     "R2-NV",         "router",   330,  830, "",             False),
+    ("NV-Switch", "NV-Switch",     "switch",   590,  830, "",             False),
+    ("NV-PC",     "NV-PC",         "pc",       850,  830, "",             False),
 
     # FLORIDA BRANCH (bottom-right)
-    ("R3-FL",     "R3-FL",         "router",  1150, 850, ""),
-    ("FL-Switch", "FL-Switch",     "switch",  1410, 850, ""),
-    ("FL-PC",     "FL-PC",         "pc",      1670, 850, ""),
+    ("R3-FL",     "R3-FL",         "router",  1150, 850, "",              False),
+    ("FL-Switch", "FL-Switch",     "switch",  1410, 850, "",              False),
+    ("FL-PC",     "FL-PC",         "pc",      1670, 850, "",              False),
 ]
 
 NODE_POS = {n[0]: (n[3], n[4]) for n in NODES}
@@ -152,26 +152,41 @@ def straight_link_svg(from_id, to_id, color, offset=0):
         lines.append(f'  <circle cx="{px:.1f}" cy="{py:.1f}" r="3.5" fill="{color}" opacity="0.9"/>')
     return "\n".join(lines)
 
-def node_svg(nid, label, icon_type, cx, cy, sublabel):
+def node_svg(nid, label, icon_type, cx, cy, sublabel, label_above=False):
     sx, sy = cx - HALF_W, cy - HALF_H
     icon_uri = ICONS[icon_type]
-    label_y1 = cy + HALF_H + 18
-    label_y2 = cy + HALF_H + 35
+    if label_above:
+        # sublabel (IP) on top, name just below it, both above the icon
+        label_y1 = cy - HALF_H - 8          # name baseline
+        label_y2 = cy - HALF_H - 24         # sublabel (IP) baseline (higher)
+    else:
+        label_y1 = cy + HALF_H + 18         # name baseline
+        label_y2 = cy + HALF_H + 35         # sublabel (IP) baseline
     lines = [
         f'  <!-- node: {nid} -->',
         f'  <image href="{icon_uri}" x="{sx}" y="{sy}" '
         f'width="{ICON_W}" height="{ICON_H}" image-rendering="optimizeQuality"/>',
     ]
-    lines += [
-        f'  <text x="{cx}" y="{label_y1}" text-anchor="middle" '
-        f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
-        f'fill="{LABEL_COLOR}">{label}</text>',
-    ]
-    if sublabel:
+    if label_above and sublabel:
+        # Draw IP first (highest), then name below it
         lines += [
             f'  <text x="{cx}" y="{label_y2}" text-anchor="middle" '
             f'font-family="{LABEL_FONT}" font-size="14" fill="#64748b">{sublabel}</text>',
+            f'  <text x="{cx}" y="{label_y1}" text-anchor="middle" '
+            f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
+            f'fill="{LABEL_COLOR}">{label}</text>',
         ]
+    else:
+        lines += [
+            f'  <text x="{cx}" y="{label_y1}" text-anchor="middle" '
+            f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
+            f'fill="{LABEL_COLOR}">{label}</text>',
+        ]
+        if sublabel:
+            lines += [
+                f'  <text x="{cx}" y="{label_y2}" text-anchor="middle" '
+                f'font-family="{LABEL_FONT}" font-size="14" fill="#64748b">{sublabel}</text>',
+            ]
     return "\n".join(lines)
 
 def build():
@@ -195,8 +210,8 @@ def build():
         parts.append(straight_link_svg(from_id, to_id, color, offset))
 
     parts.append('\n<!-- 3. ICONS + LABELS (drawn on top) -->')
-    for nid, label, icon_type, cx, cy, sublabel in NODES:
-        parts.append(node_svg(nid, label, icon_type, cx, cy, sublabel))
+    for nid, label, icon_type, cx, cy, sublabel, label_above in NODES:
+        parts.append(node_svg(nid, label, icon_type, cx, cy, sublabel, label_above))
 
     parts.append('</svg>')
     return "\n".join(parts)

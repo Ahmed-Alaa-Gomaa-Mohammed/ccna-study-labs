@@ -1,39 +1,232 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 25.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="518px" height="477px" viewBox="0 0 518 477" enable-background="new 0 0 518 477" xml:space="preserve">
-<g>
-	<path fill="#6885A9" d="M860.40002,247.39999c0.09998,0.89999,0.09998,1.8,0.09998,2.7v-2.7H860.40002z"/>
-	<path fill="#231F20" d="M862.40002,250.10001h-3.79999c0-0.8,0-1.60001-0.09998-2.5L858.30005,245.5h4.09998V250.10001
-		L862.40002,250.10001z"/>
-</g>
-<g>
-	<path fill="#6885A9" d="M860.40002,151.8c0.09998,0.89999,0.09998,1.8,0.09998,2.7v-2.7H860.40002z"/>
-	<path fill="#231F20" d="M862.40002,154.5h-3.79999c0-0.8,0-1.60001-0.09998-2.5l-0.20001-2.10001h4.09998V154.5L862.40002,154.5z"
-		/>
-</g>
-<path fill="#B2CBED" stroke="#231F20" stroke-width="4" stroke-linejoin="round" stroke-miterlimit="10" d="M860.40002,247.39999
-	c0.09998,0.89999,0.09998,1.8,0.09998,2.7v-2.7H860.40002z"/>
-<path fill="#B2CBED" stroke="#231F20" stroke-width="4" stroke-linejoin="round" stroke-miterlimit="10" d="M860.40002,151.8
-	c0.09998,0.89999,0.09998,1.8,0.09998,2.7v-2.7H860.40002z"/>
-<g>
-	<path fill="#000000" d="M242.7,256.79999H239c-5.8,0-10.5-4.7-10.5-10.5V47.2c0-5.8,4.7-10.5,10.5-10.5h3.8c5.8,0,10.5,4.7,10.5,10.5V246.3
-		C253.2,252.10001,248.5,256.79999,242.7,256.79999z"/>
-	<path fill="#000000" d="M396.89999,343.5h-3.79999c-5.79999,0-10.5-4.70001-10.5-10.5V133.89999c0-5.8,4.70001-10.5,10.5-10.5h3.79999
-		c5.79999,0,10.5,4.7,10.5,10.5V333C407.39999,338.79999,402.70001,343.5,396.89999,343.5z"/>
-	<polygon opacity="0.4" fill="#000000" enable-background="new    " points="358,422.39999 277.29999,443.10001 206.8,153.3 508.29999,334.5 	"/>
-	<polygon fill="#CCD8EE" points="69.7,405.20001 69,405.20001 69,405.70001 	"/>
-	<polygon fill="#CCD8EE" points="69.7,317.29999 69,317.29999 69,317.70001 	"/>
-	<polygon fill="#CDD9EE" points="277.29999,355.79999 71,228.60001 206.8,146.7 413.70001,273.79999 	"/>
-	<polygon fill="#CCD8EE" points="69.7,229.39999 69,229.39999 69,229.8 	"/>
-	<polygon fill="#B5C5DC" points="69,304.39999 277.29999,432.79999 277.29999,432.79999 277.29999,358.20001 69,229.8 	"/>
-	<polygon fill="#FFFFFF" points="291,347.5 114.5,237.10001 235.8,164.10001 206.8,146.7 71,228.60001 277.29999,355.79999 	"/>
-	<polygon fill="#6885A9" points="415.70001,349.5 277.29999,432.79999 277.29999,432.79999 277.29999,358.20001 415.70001,275 	"/>
-	<path fill="#231F20" d="M423.89999,270.20001L206.8,137l-145,87.39999L60.8,225v83v0.70001L277.29999,442l146.60001-88.20001
-		V270.20001z M206.8,146.7l206.90001,127.00002l-136.39999,82L71,228.60001L206.8,146.7z M413.60001,278.60001v69.69998
-		l-134.30002,80.79999v-69.70001L413.60001,278.60001z M275.20001,359.39999v69.69998L71,303.20001v-69.7L275.20001,359.39999z"/>
-	<polygon fill="#000000" points="253.2,389.29999 134.3,315.60001 134.3,304.60001 253.2,378.29999 	"/>
-	<polygon fill="#000000" points="118.6,305.89999 107.2,298.79999 107.2,287.79999 118.6,294.89999 	"/>
-	<polygon fill="#000000" points="100.4,294.70001 89,287.60001 89,276.60001 100.4,283.70001 	"/>
-</g>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="204.47507"
+   height="166.4937"
+   viewBox="0 0 204.47507 166.4937"
+   version="1.1"
+   id="svg12"
+   sodipodi:docname="Icons.svg"
+   xml:space="preserve"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.52864281"
+     inkscape:cx="709.36367"
+     inkscape:cy="83.232004"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg12"><inkscape:page
+       x="-347.76248"
+       y="-66.753143"
+       width="300"
+       height="300"
+       id="page6"
+       margin="0"
+       bleed="0" /><inkscape:page
+       x="-47.76247"
+       y="-66.753143"
+       width="300"
+       height="300"
+       id="page4"
+       margin="0"
+       bleed="0" /><inkscape:page
+       x="252.23753"
+       y="-66.753143"
+       width="300"
+       height="300"
+       id="page7"
+       margin="0"
+       bleed="0" /><inkscape:page
+       x="552.23755"
+       y="-66.753143"
+       width="300"
+       height="300"
+       id="page5"
+       margin="0"
+       bleed="0" /><inkscape:page
+       x="852.23755"
+       y="-66.753143"
+       width="300"
+       height="300"
+       id="page2"
+       margin="0"
+       bleed="0" /></sodipodi:namedview><defs
+     id="defs12"><inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect19"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 | F,0,1,1,0,16.065861,0,1 @ F,0,1,1,0,16.065861,0,1 @ F,0,1,1,0,16.065861,0,1 @ F,0,0,1,0,16.065861,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" /><inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect16"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 | F,0,1,1,0,15.395239,0,1 @ F,0,1,1,0,15.395239,0,1 @ F,0,1,1,0,15.395239,0,1 @ F,0,0,1,0,15.395239,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" /><mask
+       id="ports-mask"><rect
+         width="100%"
+         height="100%"
+         fill="#ffffff"
+         id="rect1-62"
+         x="0"
+         y="0" /><!-- 3 Ports on shaded face --><rect
+         x="72.300003"
+         y="310.5"
+         width="4.5999999"
+         height="14.5"
+         rx="2.3"
+         fill="#000000"
+         id="rect2" /><rect
+         x="71.800003"
+         y="342.5"
+         width="4.5999999"
+         height="14.5"
+         rx="2.3"
+         fill="#000000"
+         id="rect3" /><rect
+         x="70.800003"
+         y="374"
+         width="4.5999999"
+         height="14.5"
+         rx="2.3"
+         fill="#000000"
+         id="rect4-9" /></mask><mask
+       id="slots-mask"><rect
+         width="1024"
+         height="1024"
+         fill="#ffffff"
+         id="rect1-1"
+         x="0"
+         y="0" /><g
+         transform="skewY(45)"
+         fill="#000000"
+         id="g4"><rect
+           x="197"
+           y="453.60001"
+           width="39.200001"
+           height="21.700001"
+           rx="3"
+           id="rect2-2" /><rect
+           x="197"
+           y="502.20001"
+           width="39.200001"
+           height="21.700001"
+           rx="3"
+           id="rect3-7" /><rect
+           x="197"
+           y="551.20001"
+           width="39.200001"
+           height="21.700001"
+           rx="3"
+           id="rect4-0" /></g></mask></defs><!-- Background --><!-- Switch 3D Body Base --><!-- Front-Right Face Panel --><!-- Top Face Panel --><!-- Ethernet Ports (Front-Left Face) --><!-- Routing Arrows (Top Face) --><g
+     id="g9"
+     transform="matrix(0.4096662,0,0,0.40998145,-230.82395,69.341405)"
+     style="stroke-width:14.525;stroke-dasharray:none"
+     inkscape:label="Router"><path
+       d="m 572.50697,-35.57003 v 139 a 240.50002,124.50001 0 0 0 481.00003,0 v -139"
+       fill="none"
+       stroke="#211f20"
+       stroke-width="9.5"
+       stroke-linejoin="round"
+       id="path5"
+       style="fill:#ffffff;stroke-width:18.126;stroke-dasharray:none" /><path
+       id="ellipse5"
+       style="fill:#ffffff;stroke:#211f20;stroke-width:18.126;stroke-dasharray:none"
+       d="m 1053.507,-35.57003 a 240.5,124.5 0 0 1 -240.50004,124.5 240.5,124.5 0 0 1 -240.5,-124.5 240.5,124.5 0 0 1 240.5,-124.5 240.5,124.5 0 0 1 240.50004,124.5 z" /><path
+       id="line5"
+       style="stroke:#211f20;stroke-width:10.07;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       d="M 637.50697,10.92997 767.68806,-23.89918"
+       sodipodi:nodetypes="cc" /><path
+       id="polygon5"
+       style="fill:#211f20;stroke-width:14.525;stroke-dasharray:none"
+       d="m 792.20697,-30.77003 -58.7,-0.6 26.6,27.2 z"
+       sodipodi:nodetypes="cccc" /><path
+       id="line6"
+       style="stroke:#211f20;stroke-width:10.07;stroke-linecap:round;stroke-dasharray:none"
+       d="M 989.50697,-83.07003 867.81864,-50.95784"
+       sodipodi:nodetypes="cc" /><path
+       id="polygon6"
+       style="fill:#211f20;stroke-width:14.525;stroke-dasharray:none"
+       d="m 836.90697,-43.07003 58.6,2.5 -28,-28 z"
+       sodipodi:nodetypes="cccc" /><path
+       id="line7"
+       style="stroke:#211f20;stroke-width:10.07;stroke-linecap:round;stroke-dasharray:none"
+       d="m 799.50697,-52.57003 -65.23629,-65.23629"
+       sodipodi:nodetypes="cc" /><path
+       id="polygon7"
+       style="fill:#211f20;stroke-width:14.525;stroke-dasharray:none"
+       d="m 720.70697,-130.67003 51.1,17.5 -53.1,13.5 z"
+       sodipodi:nodetypes="cccc" /><path
+       style="stroke:#211f20;stroke-width:10.07;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       d="m 825.50697,-26.57003 62.0643,62.0643"
+       id="line8"
+       sodipodi:nodetypes="cc" /><path
+       id="polygon8"
+       style="fill:#211f20;stroke-width:14.525;stroke-dasharray:none"
+       d="m 903.50697,53.42997 -47.1,-16 50.8,-14 z"
+       sodipodi:nodetypes="cccc" /><path
+       style="fill:#211f20;fill-opacity:1;stroke:none;stroke-width:14.525;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       d="M 646.37925,193.20599 C 613.36174,132.4258 615.66798,84.00798 616.26772,37.52814 592.99787,20.9029 586.36509,9.97459 572.35377,-18.04806 v 134.34942 c 11.15937,30.67091 21.2322,47.081 74.02548,76.90463 z"
+       id="path31"
+       sodipodi:nodetypes="ccccc" /><ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:14.5512;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="ellipse33"
+       cx="542.2063"
+       cy="307.41971"
+       rx="4.3402758"
+       ry="8.1938353"
+       transform="matrix(0.90445132,-0.42657686,0.34837544,0.93735508,0,0)"
+       inkscape:transform-center-x="0.74843482"
+       inkscape:transform-center-y="-3.3011479" /><ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:14.5512;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="ellipse34"
+       cx="530.74646"
+       cy="337.1716"
+       rx="4.3402758"
+       ry="8.1938353"
+       transform="matrix(0.90445132,-0.42657686,0.34837544,0.93735508,0,0)"
+       inkscape:transform-center-x="0.90989575"
+       inkscape:transform-center-y="-5.238679" /><ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:14.5512;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="path33"
+       cx="519.28668"
+       cy="366.92349"
+       rx="4.3402758"
+       ry="8.1938353"
+       transform="matrix(0.90445132,-0.42657686,0.34837544,0.93735508,0,0)"
+       inkscape:transform-center-x="0.90989575"
+       inkscape:transform-center-y="-5.238679" /></g></svg>

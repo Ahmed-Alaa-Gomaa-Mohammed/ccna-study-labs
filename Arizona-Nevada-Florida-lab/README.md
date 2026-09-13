@@ -26,8 +26,8 @@ flowchart TD
 
     subgraph Arizona_HQ ["ARIZONA HQ CAMPUS (Subnets: 10.16.0.0/24 & 10.1.1.0/24)"]
         R1["R1-AZ (Router)<br><b>Eth1/0: 10.16.0.2/24</b>"]:::router
-        Core1["Core1 (Switch)<br><b>SVI Vlan1: 10.16.0.1/24</b>"]:::switch
-        Core2["Core2 (Switch)<br>Distribution / Core"]:::switch
+        Core1["Core1 (L3 Switch)<br><b>SVI Vlan1: 10.16.0.1/24</b>"]:::switch
+        Core2["Core2 (L3 Switch)<br>Distribution / Core"]:::switch
         Access1["Access1 (Switch)<br>Access Layer"]:::access
         PC10["PC-10 (Host PC)<br><b>eth1: 10.1.1.10/24</b>"]:::host
         PC20["PC-20 (Host PC)<br><b>eth1: 10.1.1.11/24</b>"]:::host

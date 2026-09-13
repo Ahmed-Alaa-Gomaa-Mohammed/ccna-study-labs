@@ -6,48 +6,45 @@ topology:
     R1-AZ:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:17.12.01
-      mgmt-ipv4: 172.20.20.11
-      startup-config: configs/R1-AZ.cfg
+      startup-config: |-
+        configs/R1-AZ.cfg
 
     Core1:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      mgmt-ipv4: 172.20.20.15
-      startup-config: configs/Core1.cfg
+      startup-config: |-
+        configs/Core1.cfg
 
     Core2:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      mgmt-ipv4: 172.20.20.9
-      startup-config: configs/Core2.cfg
+      startup-config: |-
+        configs/Core2.cfg
 
     Access1:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      mgmt-ipv4: 172.20.20.8
-      startup-config: configs/Access1.cfg
+      startup-config: |-
+        configs/Access1.cfg
 
     PC-10:
       kind: linux
       image: alpine:latest
-      mgmt-ipv4: 172.20.20.4
       exec:
         - ip addr add 10.1.1.10/24 dev eth1
 
     PC-20:
       kind: linux
       image: alpine:latest
-      mgmt-ipv4: 172.20.20.10
       exec:
         - ip addr add 10.1.1.11/24 dev eth1
 
     MetroE:
       kind: linux
       image: frrouting/frr:latest
-      mgmt-ipv4: 172.20.20.12
       exec:
         - sysctl -w net.ipv4.ip_forward=1
         - ip link add br0 type bridge
@@ -59,45 +56,42 @@ topology:
     Internet:
       kind: linux
       image: frrouting/frr:latest
-      mgmt-ipv4: 172.20.20.3
       exec:
         - sysctl -w net.ipv4.ip_forward=1
 
     R2-NV:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:17.12.01
-      mgmt-ipv4: 172.20.20.7
-      startup-config: configs/R2-NV.cfg
+      startup-config: |-
+        configs/R2-NV.cfg
 
     NV-Switch:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      mgmt-ipv4: 172.20.20.13
-      startup-config: configs/NV-Switch.cfg
+      startup-config: |-
+        configs/NV-Switch.cfg
 
     NV-PC:
       kind: linux
       image: alpine:latest
-      mgmt-ipv4: 172.20.20.2
 
     R3-FL:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:17.12.01
-      mgmt-ipv4: 172.20.20.5
-      startup-config: configs/R3-FL.cfg
+      startup-config: |-
+        configs/R3-FL.cfg
 
     FL-Switch:
       kind: cisco_iol
       image: tkdebnath/cisco_iol:L2-17.12.01
       type: l2
-      mgmt-ipv4: 172.20.20.14
-      startup-config: configs/FL-Switch.cfg
+      startup-config: |-
+        configs/FL-Switch.cfg
 
     FL-PC:
       kind: linux
       image: alpine:latest
-      mgmt-ipv4: 172.20.20.6
 
   links:
     - endpoints: ["Core1:Ethernet2/3", "Core2:Ethernet3/0"]

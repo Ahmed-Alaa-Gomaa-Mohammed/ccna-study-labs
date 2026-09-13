@@ -44,7 +44,7 @@ NODES = [
     # ARIZONA HQ CAMPUS (right)
     ("R1-AZ",     "R1-AZ",         "router",   1150, 360, "10.16.0.2/24", False),
     ("Core1",     "Core1",         "l3switch", 1370, 210, "10.16.0.1/24", True),
-    ("Core2",     "Core2",         "l3switch", 1370, 510, "",              True),
+    ("Core2",     "Core2",         "l3switch", 1370, 510, "",              False),
     ("Access1",   "Access1",       "switch",   1590, 360, "",              False),
     ("PC-10",     "PC-10",         "pc",       1810, 210, "10.1.1.10/24", False),
     ("PC-20",     "PC-20",         "pc",       1810, 510, "10.1.1.11/24", False),
@@ -168,13 +168,13 @@ def node_svg(nid, label, icon_type, cx, cy, sublabel, label_above=False):
         f'width="{ICON_W}" height="{ICON_H}" image-rendering="optimizeQuality"/>',
     ]
     if label_above and sublabel:
-        # Draw IP first (highest), then name below it
+        # Draw name first (top), then IP below it — both above the icon
         lines += [
             f'  <text x="{cx}" y="{label_y2}" text-anchor="middle" '
-            f'font-family="{LABEL_FONT}" font-size="14" fill="#64748b">{sublabel}</text>',
-            f'  <text x="{cx}" y="{label_y1}" text-anchor="middle" '
             f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
             f'fill="{LABEL_COLOR}">{label}</text>',
+            f'  <text x="{cx}" y="{label_y1}" text-anchor="middle" '
+            f'font-family="{LABEL_FONT}" font-size="14" fill="#64748b">{sublabel}</text>',
         ]
     else:
         lines += [

@@ -163,16 +163,12 @@ def node_svg(nid, label, icon_type, cx, cy, sublabel):
         f'width="{ICON_W}" height="{ICON_H}" image-rendering="optimizeQuality"/>',
     ]
     lines += [
-        f'  <rect x="{cx - 68}" y="{cy + HALF_H + 4}" width="136" height="19" '
-        f'rx="3" fill="{BG}" fill-opacity="1" stroke="#cbd5e1" stroke-width="1"/>',
         f'  <text x="{cx}" y="{label_y1}" text-anchor="middle" '
         f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
         f'fill="{LABEL_COLOR}">{label}</text>',
     ]
     if sublabel:
         lines += [
-            f'  <rect x="{cx - 70}" y="{cy + HALF_H + 23}" width="140" height="17" '
-            f'rx="3" fill="{BG}" fill-opacity="1" stroke="#cbd5e1" stroke-width="1"/>',
             f'  <text x="{cx}" y="{label_y2}" text-anchor="middle" '
             f'font-family="{LABEL_FONT}" font-size="14" fill="#64748b">{sublabel}</text>',
         ]

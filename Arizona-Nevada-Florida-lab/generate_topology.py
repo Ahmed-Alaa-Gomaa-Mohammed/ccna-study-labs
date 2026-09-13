@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """
-Topology SVG: isoflow icons at direct pixel positions.
-Layout: SP center, AZ right, NV bottom-left, FL bottom-right.
-Draw order: zones → links → icons → labels (text always on top).
-Links support optional explicit waypoints for clean routing.
+Topology SVG generator using custom isometric icons from Icons.svg.
+Layout: Service Provider center, Arizona HQ right, Nevada DC bottom-left, Florida Branch bottom-right.
+Links: Clean direct straight lines (Packet Tracer / GNS3 style), no 90-degree elbows.
+Dual links between Core1 and Core2 drawn as parallel straight lines.
+Links are mapped 1:1 from ccna.clab.yml (all 15 links).
 """
 
-import base64, os
+import base64
+import os
+import math
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ICON_DIR = os.path.join(SCRIPT_DIR, "isoflow-icons")
@@ -15,10 +18,9 @@ W, H = 2000, 1100
 BG = "#ffffff"
 LABEL_FONT = "Inter, 'Segoe UI', Arial, sans-serif"
 LABEL_COLOR = "#1e293b"
-ICON_W, ICON_H = 120, 111   # bigger icons (~518:477 ratio)
+ICON_W, ICON_H = 120, 111
 HALF_W, HALF_H = ICON_W // 2, ICON_H // 2
 
-# ── icon loader ──────────────────────────────────────────────────────────────
 def load_icon(filename):
     with open(os.path.join(ICON_DIR, filename), "rb") as f:
         data = f.read()
@@ -26,80 +28,77 @@ def load_icon(filename):
 
 ICONS = {
     "router": load_icon("router.svg"),
-    "switch": load_icon("L2-switch.svg"),
-    "pc":     load_icon("desktop.svg"),
-    "cloud":  load_icon("cloud.svg"),
+    "switch": load_icon("switch.svg"),
+    "l3switch": load_icon("l3switch.svg"),
+    "pc": load_icon("pc.svg"),
+    "cloud": load_icon("cloud.svg"),
 }
 
-# ── node definitions (cx, cy = icon center) ──────────────────────────────────
-#   id, label, type, cx, cy, sublabel
+# Node definitions: (id, label, type, cx, cy, sublabel)
+# Official IPs only: Core1 (10.16.0.1/24), R1-AZ (10.16.0.2/24), PC-10 (10.1.1.10/24), PC-20 (10.1.1.11/24)
 NODES = [
-    # ── SERVICE PROVIDER (center) ──
-    ("internet", "Internet",      "cloud",  800, 230, ""),
-    ("metroe",   "MetroE Bridge", "cloud",  800, 490, ""),
+    # SERVICE PROVIDER (center)
+    ("Internet",  "Internet",      "cloud",   800, 210, ""),
+    ("MetroE",    "MetroE",        "cloud",   800, 480, ""),
 
-    # ── ARIZONA HQ CAMPUS (right) — IPs from IP Addressing Table only ──
-    ("r1_az",   "R1-AZ",   "router", 1150, 350, "10.16.0.2/24"),
-    ("core1",   "Core1",   "switch", 1370, 210, "10.16.0.1/24"),
-    ("core2",   "Core2",   "switch", 1370, 490, ""),
-    ("access1", "Access1", "switch", 1590, 210, ""),
-    ("access2", "Access2", "switch", 1590, 490, ""),
-    ("pc10",    "PC-10",   "pc",     1810, 210, "10.1.1.10/24"),
-    ("pc20",    "PC-20",   "pc",     1810, 490, "10.1.1.11/24"),
+    # ARIZONA HQ CAMPUS (right)
+    ("R1-AZ",     "R1-AZ",         "router",  1150, 360, "10.16.0.2/24"),
+    ("Core1",     "Core1",         "switch",  1370, 210, "10.16.0.1/24"),
+    ("Core2",     "Core2",         "switch",  1370, 510, ""),
+    ("Access1",   "Access1",       "switch",  1590, 360, ""),
+    ("PC-10",     "PC-10",         "pc",      1810, 210, "10.1.1.10/24"),
+    ("PC-20",     "PC-20",         "pc",      1810, 510, "10.1.1.11/24"),
 
-    # ── NEVADA DC (bottom-left) ──
-    ("r1_nv",   "R1-NV",   "router", 330,  800, ""),
-    ("core_nv", "Core-NV", "switch", 590,  800, ""),
-    ("srv_nv",  "SRV-NV",  "pc",     850,  800, ""),
+    # NEVADA DC (bottom-left)
+    ("R2-NV",     "R2-NV",         "router",  330,  830, ""),
+    ("NV-Switch", "NV-Switch",     "switch",  590,  830, ""),
+    ("NV-PC",     "NV-PC",         "pc",      850,  830, ""),
 
-    # ── FLORIDA BRANCH (bottom-right) ──
-    ("r1_fl",   "R1-FL",   "router", 1150, 870, ""),
-    ("core_fl", "Core-FL", "switch", 1410, 870, ""),
-    ("pc_fl",   "PC-FL",   "pc",     1670, 870, ""),
+    # FLORIDA BRANCH (bottom-right)
+    ("R3-FL",     "R3-FL",         "router",  1150, 850, ""),
+    ("FL-Switch", "FL-Switch",     "switch",  1410, 850, ""),
+    ("FL-PC",     "FL-PC",         "pc",      1670, 850, ""),
 ]
 
 NODE_POS = {n[0]: (n[3], n[4]) for n in NODES}
 
-# ── links: (from, to, color, label, waypoints_or_None) ───────────────────────
-# waypoints = list of (x,y) intermediate screen points the path must pass through
+# All 15 links from ccna.clab.yml
 LINKS = [
-    # WAN / provider — explicit routing to avoid zone crossings
-    ("internet", "r1_az",   "#d97706", "", [(1150, 230)]),
-    ("metroe",   "r1_az",   "#d97706", "", [(800, 350),(1000,350)]),
-    ("metroe",   "r1_nv",   "#d97706", "", [(330, 490)]),
-    ("metroe",   "r1_fl",   "#d97706", "", [(1000, 490),(1000, 870)]),
+    # WAN links (direct straight lines)
+    ("Internet",  "R1-AZ",     "#d97706", 0),
+    ("MetroE",    "R1-AZ",     "#d97706", 0),
+    ("MetroE",    "R2-NV",     "#d97706", 0),
+    ("MetroE",    "R3-FL",     "#d97706", 0),
 
-    # Arizona HQ internal
-    ("r1_az",    "core1",   "#0284c7", "", None),
-    ("r1_az",    "core2",   "#0284c7", "", None),
-    ("core1",    "core2",   "#0284c7", "", None),
-    ("core1",    "access1", "#059669", "", None),
-    ("core2",    "access2", "#059669", "", None),
-    ("access1",  "pc10",    "#64748b", "", None),
-    ("access2",  "pc20",    "#64748b", "", None),
+    # Arizona HQ links (direct straight lines)
+    ("R1-AZ",     "Core1",     "#0284c7", 0),
+    # Dual links between Core1 and Core2 (parallel lines offset by +/- 12px)
+    ("Core1",     "Core2",     "#0284c7", -12),
+    ("Core1",     "Core2",     "#0284c7", 12),
+    ("Core1",     "Access1",   "#059669", 0),
+    ("Core2",     "Access1",   "#059669", 0),
+    ("Access1",   "PC-10",     "#64748b", 0),
+    ("Access1",   "PC-20",     "#64748b", 0),
 
-    # Nevada DC
-    ("r1_nv",    "core_nv", "#7c3aed", "", None),
-    ("core_nv",  "srv_nv",  "#64748b", "", None),
+    # Nevada DC links
+    ("R2-NV",     "NV-Switch", "#7c3aed", 0),
+    ("NV-Switch", "NV-PC",     "#64748b", 0),
 
-    # Florida Branch
-    ("r1_fl",    "core_fl", "#e11d48", "", None),
-    ("core_fl",  "pc_fl",   "#64748b", "", None),
+    # Florida Branch links
+    ("R3-FL",     "FL-Switch", "#e11d48", 0),
+    ("FL-Switch", "FL-PC",     "#64748b", 0),
 ]
 
-# ── zones ─────────────────────────────────────────────────────────────────────
 ZONES = [
     {"label": "SERVICE PROVIDER",  "color": "#d97706",
-     "nodes": ["internet", "metroe"]},
+     "nodes": ["Internet", "MetroE"]},
     {"label": "ARIZONA HQ CAMPUS", "color": "#0284c7",
-     "nodes": ["r1_az","core1","core2","access1","access2","pc10","pc20"]},
+     "nodes": ["R1-AZ", "Core1", "Core2", "Access1", "PC-10", "PC-20"]},
     {"label": "NEVADA DC",         "color": "#7c3aed",
-     "nodes": ["r1_nv","core_nv","srv_nv"]},
+     "nodes": ["R2-NV", "NV-Switch", "NV-PC"]},
     {"label": "FLORIDA BRANCH",    "color": "#e11d48",
-     "nodes": ["r1_fl","core_fl","pc_fl"]},
+     "nodes": ["R3-FL", "FL-Switch", "FL-PC"]},
 ]
-
-# ── SVG helpers ───────────────────────────────────────────────────────────────
 
 def zone_rect(zone):
     color = zone["color"]
@@ -108,11 +107,11 @@ def zone_rect(zone):
     for nid in zone["nodes"]:
         cx, cy = NODE_POS[nid]
         xs += [cx - HALF_W, cx + HALF_W]
-        ys += [cy - HALF_H, cy + HALF_H + 40]   # room for 2 label lines
+        ys += [cy - HALF_H, cy + HALF_H + 40]
 
     pad = 30
     x0 = min(xs) - pad
-    y0 = min(ys) - pad - 24   # extra room above for zone label
+    y0 = min(ys) - pad - 24
     x1 = max(xs) + pad
     y1 = max(ys) + pad
     rw, rh = x1 - x0, y1 - y0
@@ -127,43 +126,31 @@ def zone_rect(zone):
         f'letter-spacing="0.08em" fill="{color}" opacity="0.95">{label}</text>'
     )
 
-
-def link_svg(from_id, to_id, color, lbl, waypoints):
+def straight_link_svg(from_id, to_id, color, offset=0):
     x1, y1 = NODE_POS[from_id]
     x2, y2 = NODE_POS[to_id]
 
-    if waypoints:
-        pts = [(x1, y1)] + list(waypoints) + [(x2, y2)]
-        cmds = [f"M{pts[0][0]},{pts[0][1]}"]
-        for px, py in pts[1:]:
-            cmds.append(f"L{px},{py}")
-        d = " ".join(cmds)
-        mid_idx = len(pts) // 2
-        mx, my = pts[mid_idx]
-    else:
-        if abs(y1 - y2) < 20:
-            d = f"M{x1},{y1} L{x2},{y2}"
-        else:
-            mx_e = (x1 + x2) // 2
-            d = f"M{x1},{y1} L{mx_e},{y1} L{mx_e},{y2} L{x2},{y2}"
-        mx, my = (x1 + x2) // 2, (y1 + y2) // 2
+    if offset != 0:
+        dx = x2 - x1
+        dy = y2 - y1
+        length = math.hypot(dx, dy)
+        if length > 0:
+            px = -dy / length * offset
+            py = dx / length * offset
+            x1 += px
+            y1 += py
+            x2 += px
+            y2 += py
+
+    d = f"M {x1:.1f},{y1:.1f} L {x2:.1f},{y2:.1f}"
 
     lines = [
-        f'  <path d="{d}" fill="none" stroke="{color}" stroke-width="2" '
-        f'stroke-opacity="0.75" stroke-linecap="round" stroke-linejoin="round"/>'
+        f'  <path d="{d}" fill="none" stroke="{color}" stroke-width="2.2" '
+        f'stroke-opacity="0.8" stroke-linecap="round"/>'
     ]
-    lines.append(
-        f'  <circle cx="{x2}" cy="{y2}" r="4" fill="{color}" opacity="0.9"/>'
-    )
-    if lbl:
-        lines += [
-            f'  <rect x="{mx - 26}" y="{my - 12}" width="52" height="14" '
-            f'rx="3" fill="{BG}" fill-opacity="0.8"/>',
-            f'  <text x="{mx}" y="{my - 1}" text-anchor="middle" '
-            f'font-family="{LABEL_FONT}" font-size="11" fill="{color}" opacity="0.95">{lbl}</text>',
-        ]
+    for px, py in [(x1, y1), (x2, y2)]:
+        lines.append(f'  <circle cx="{px:.1f}" cy="{py:.1f}" r="3.5" fill="{color}" opacity="0.9"/>')
     return "\n".join(lines)
-
 
 def node_svg(nid, label, icon_type, cx, cy, sublabel):
     sx, sy = cx - HALF_W, cy - HALF_H
@@ -171,13 +158,13 @@ def node_svg(nid, label, icon_type, cx, cy, sublabel):
     label_y1 = cy + HALF_H + 18
     label_y2 = cy + HALF_H + 35
     lines = [
-        f'  <!-- icon: {nid} -->',
+        f'  <!-- node: {nid} -->',
         f'  <image href="{icon_uri}" x="{sx}" y="{sy}" '
         f'width="{ICON_W}" height="{ICON_H}" image-rendering="optimizeQuality"/>',
     ]
     lines += [
         f'  <rect x="{cx - 68}" y="{cy + HALF_H + 4}" width="136" height="19" '
-        f'rx="3" fill="{BG}" fill-opacity="0.9"/>',
+        f'rx="3" fill="{BG}" fill-opacity="1" stroke="#cbd5e1" stroke-width="1"/>',
         f'  <text x="{cx}" y="{label_y1}" text-anchor="middle" '
         f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
         f'fill="{LABEL_COLOR}">{label}</text>',
@@ -185,12 +172,11 @@ def node_svg(nid, label, icon_type, cx, cy, sublabel):
     if sublabel:
         lines += [
             f'  <rect x="{cx - 70}" y="{cy + HALF_H + 23}" width="140" height="17" '
-            f'rx="3" fill="{BG}" fill-opacity="0.9"/>',
+            f'rx="3" fill="{BG}" fill-opacity="1" stroke="#cbd5e1" stroke-width="1"/>',
             f'  <text x="{cx}" y="{label_y2}" text-anchor="middle" '
             f'font-family="{LABEL_FONT}" font-size="14" fill="#64748b">{sublabel}</text>',
         ]
     return "\n".join(lines)
-
 
 def build():
     parts = [
@@ -202,24 +188,22 @@ def build():
         f'<text x="36" y="50" font-family="{LABEL_FONT}" font-size="26" '
         f'font-weight="700" fill="#1e293b">Arizona / Nevada / Florida — Network Topology</text>',
         '',
-        '<!-- ═══ 1. ZONE BORDERS (drawn first, behind everything) ═══ -->',
+        '<!-- 1. ZONE BORDERS -->',
     ]
     for z in ZONES:
         parts.append(zone_rect(z))
 
-    parts.append('\n<!-- ═══ 2. LINKS (drawn before icons so text is always on top) ═══ -->')
+    parts.append('\n<!-- 2. STRAIGHT LINKS (Packet Tracer style) -->')
     for row in LINKS:
-        from_id, to_id, color, lbl = row[0], row[1], row[2], row[3]
-        waypoints = row[4] if len(row) > 4 else None
-        parts.append(link_svg(from_id, to_id, color, lbl, waypoints))
+        from_id, to_id, color, offset = row[0], row[1], row[2], row[3]
+        parts.append(straight_link_svg(from_id, to_id, color, offset))
 
-    parts.append('\n<!-- ═══ 3. ICONS + LABELS (drawn last, always on top) ═══ -->')
+    parts.append('\n<!-- 3. ICONS + LABELS (drawn on top) -->')
     for nid, label, icon_type, cx, cy, sublabel in NODES:
         parts.append(node_svg(nid, label, icon_type, cx, cy, sublabel))
 
     parts.append('</svg>')
     return "\n".join(parts)
-
 
 if __name__ == "__main__":
     out = os.path.join(SCRIPT_DIR, "topology.svg")

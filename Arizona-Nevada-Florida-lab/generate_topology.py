@@ -174,7 +174,8 @@ def node_svg(nid, label, icon_type, cx, cy, sublabel, label_above=False):
             f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
             f'fill="{LABEL_COLOR}">{label}</text>',
             f'  <text x="{cx}" y="{label_y1}" text-anchor="middle" '
-            f'font-family="{LABEL_FONT}" font-size="14" fill="#64748b">{sublabel}</text>',
+            f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
+            f'fill="{LABEL_COLOR}">{sublabel}</text>',
         ]
     else:
         lines += [
@@ -185,7 +186,8 @@ def node_svg(nid, label, icon_type, cx, cy, sublabel, label_above=False):
         if sublabel:
             lines += [
                 f'  <text x="{cx}" y="{label_y2}" text-anchor="middle" '
-                f'font-family="{LABEL_FONT}" font-size="14" fill="#64748b">{sublabel}</text>',
+                f'font-family="{LABEL_FONT}" font-size="16" font-weight="600" '
+                f'fill="{LABEL_COLOR}">{sublabel}</text>',
             ]
     return "\n".join(lines)
 

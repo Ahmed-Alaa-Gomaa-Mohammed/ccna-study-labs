@@ -25,8 +25,8 @@ Each lab is maintained as a self-contained module containing its own Containerla
 ccna-study-labs/
 ├── Arizona-Nevada-Florida-lab/         # Lab 01: Multi-Site Enterprise Lab
 │   ├── ccna.clab.yml                   # Containerlab topology definition
-│   ├── topology.svg                    # EVE-NG / GNS3 styled vector topology diagram
-│   ├── topology.dot                    # Graphviz DOT diagram source
+│   ├── topology.png                    # High-DPI anti-aliased isometric topology diagram
+│   ├── topology.svg                    # Vector diagram source
 │   ├── README.md                       # Lab documentation, data IP table & exercise tasks
 │   └── configs/                        # Cisco IOL startup configurations (NVRAM synced)
 │       ├── R1-AZ.cfg
